@@ -4,64 +4,61 @@ A modern, web-based character sheet tracker for Dungeons & Dragons 5th Edition. 
 
 ## Features
 
-### Character Creation & Management
-- **Complete Character Setup**: Configure all standard D&D 5e character options including:
-  - Basic information (name, class, race, background, level, alignment)
-  - All six ability scores with automatic modifier calculation
-  - Combat stats (AC, initiative, speed, proficiency bonus)
-  - Hit points (max, current, temporary)
-  - Skill proficiencies with automatic bonus calculation
-  - Equipment and notes sections
+### Core Character Management
+- **Complete D&D 5e Character Sheet**: All standard character information including basic details, ability scores, combat stats, hit points, skills, and equipment
+- **Auto-calculations**: Automatic calculation of ability modifiers, skill bonuses, proficiency bonuses, and other derived stats
+- **Multiple Character Support**: Save and load multiple characters with persistent local storage
+- **Character Export/Import**: Export character data to JSON files for backup and sharing, import characters from exported files
 
-### Comprehensive Spellcasting System
-- **Full D&D 5e Compliance**: Implements accurate spellcasting rules for all spellcasting classes
+### Spellcasting System
+- **Full D&D 5e Spell Support**: Complete implementation of official spellcasting rules
 - **Class-Specific Mechanics**: 
-  - **Full Casters** (Bard, Cleric, Druid, Sorcerer, Wizard): Complete 1st-9th level spell progression
-  - **Half Casters** (Paladin, Ranger): Proper spell slot progression starting at 2nd level
-  - **Warlock**: Unique Pact Magic system with short rest recovery
-- **Spell Slot Management**: 
-  - Visual spell slot tracking with click-to-use interface
-  - Automatic spell slot calculation based on class and level
-  - Short rest recovery (Warlocks) and long rest recovery (all classes)
-- **Spell Knowledge Systems**:
-  - **Known Spells** (Bard, Ranger, Sorcerer, Warlock): Fixed number of spells known
-  - **Prepared Spells** (Cleric, Druid, Paladin, Wizard): Daily spell preparation from full spell list
-- **Cantrip Support**: Separate cantrip tracking with level-based progression
-- **Spell Casting**: 
-  - Cast spells using appropriate spell slots
-  - Automatic upcasting to higher level slots when needed
-  - Preparation status tracking for preparation-based casters
-- **Spellcasting Stats**: Automatic calculation of spell save DC and spell attack bonuses
-
-### Automatic Calculations
-- **Ability Modifiers**: Automatically calculates and displays modifiers for all ability scores
-- **Skill Bonuses**: Dynamically updates skill bonuses based on ability scores and proficiency selections
-- **Level-Based Stats**: Updates proficiency bonus, hit dice, and spell progression based on character level
-- **Initiative**: Automatically calculates initiative bonus from Dexterity modifier
-- **Class-Specific Features**: Hit dice and spellcasting abilities adjust based on selected class
-- **Spellcasting Calculations**: Spell save DC (8 + proficiency + ability modifier) and spell attack bonus
-
-### Data Management
-- **Local Storage**: All character data is saved locally in your browser
-- **Multiple Characters**: Create and manage multiple characters
-- **Auto-Save**: Automatically saves changes as you make them
-- **Manual Save/Load**: Explicit save and load functionality with character selection
-- **Character Deletion**: Remove unwanted characters with confirmation
-- **Spell Persistence**: All spells, cantrips, and spell slot usage are saved with your character
+  - Full casters (Bard, Cleric, Druid, Sorcerer, Wizard): 1st-9th level spells
+  - Half casters (Paladin, Ranger): 1st-5th level spells starting at level 2  
+  - Warlock: Pact Magic with short rest recovery
+- **Spell Management**: Add, remove, and organize spells by level with known vs prepared spell tracking
+- **Visual Spell Slot Tracking**: Interactive spell slot grid with click-to-use functionality
+- **Cantrip Support**: Unlimited cantrip usage with level-based progression limits
+- **Rest Recovery**: Proper short rest (Warlock) and long rest (all classes) spell slot recovery
 
 ### User Experience
-- **Modern Design**: Beautiful, fantasy-themed interface with responsive design
-- **Mobile Friendly**: Works on desktop, tablet, and mobile devices
-- **Intuitive Interface**: Easy-to-use form layout with clear organization
-- **Visual Feedback**: Hover effects, animations, and clear visual hierarchy
-- **Spell Management**: Organized spell interface with level tabs and detailed spell information
+- **Modern UI**: Clean, responsive design with fantasy-themed styling
+- **Auto-save**: Automatic saving of character data as you make changes
+- **Mobile Friendly**: Responsive design that works on all devices
+- **Data Privacy**: All data stored locally in your browser - no cloud storage or data collection
 
 ## How to Use
 
 ### Getting Started
 1. Open `index.html` in your web browser
-2. The application will load with default character values
-3. Start filling in your character information
+2. Fill in your character's basic information (name, class, race, etc.)
+3. Set ability scores using point buy, standard array, or rolled stats
+4. Configure skills, equipment, and other character details
+5. For spellcasters, add spells and manage spell slots
+
+### Character Management
+- **New Character**: Click "New Character" to start fresh
+- **Save Character**: Click "Save Character" to store locally in browser
+- **Load Character**: Click "Load Character" to switch between saved characters
+- **Export Character**: Click "Export Character" to download a JSON file backup
+- **Import Character**: Click "Import Character" to load a character from a JSON file
+
+### Export/Import Features
+- **Exporting**: Creates a downloadable JSON file with all character data including spells, equipment, and stats
+- **Importing**: Load any exported character file to restore complete character data
+- **Cross-Session**: Export at end of game session, import at start of next session
+- **Backup**: Export files serve as permanent backups independent of browser storage
+- **Sharing**: Share character files with other players or DMs
+- **File Format**: Clean JSON format with metadata (export date, app version)
+
+### Spellcasting (For Spellcasters)
+1. **Set Spellcasting Class**: Choose your spellcasting class to enable spell features
+2. **Add Cantrips**: Click "Add Cantrip" to add unlimited-use spells
+3. **Add Spells**: Use "Add Spell" to add leveled spells to your spellbook
+4. **Prepare Spells**: For preparation-based casters, toggle spell preparation status
+5. **Cast Spells**: Click "Cast" on any spell to automatically use spell slots
+6. **Manage Slots**: Click spell slot circles to manually track usage
+7. **Rest Recovery**: Use "Short Rest" (Warlocks) or "Long Rest" (all) to recover slots
 
 ### Creating a New Character
 1. Click the "New Character" button in the header

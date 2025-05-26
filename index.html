@@ -15,6 +15,10 @@
                 <button id="new-character-btn" class="btn btn-primary">New Character</button>
                 <button id="save-character-btn" class="btn btn-secondary">Save Character</button>
                 <button id="load-character-btn" class="btn btn-secondary">Load Character</button>
+                <button id="export-character-btn" class="btn btn-secondary">Export Character</button>
+                <button id="import-character-btn" class="btn btn-secondary">Import Character</button>
+                <button id="save-info-btn" class="btn btn-info" title="Save/Load Help">ℹ️</button>
+                <input type="file" id="import-file-input" accept=".json" style="display: none;">
             </div>
         </header>
 
@@ -132,7 +136,10 @@
                     </div>
                     <div class="stat-group">
                         <label for="initiative">Initiative</label>
-                        <input type="number" id="initiative" value="0" readonly>
+                        <div class="input-with-info">
+                            <input type="number" id="initiative" value="0" readonly>
+                            <button class="info-btn" type="button" data-tooltip="Initiative = Dexterity Modifier">ℹ️</button>
+                        </div>
                     </div>
                     <div class="stat-group">
                         <label for="speed">Speed</label>
@@ -140,7 +147,10 @@
                     </div>
                     <div class="stat-group">
                         <label for="proficiency-bonus">Proficiency Bonus</label>
-                        <input type="number" id="proficiency-bonus" value="2" readonly>
+                        <div class="input-with-info">
+                            <input type="number" id="proficiency-bonus" value="2" readonly>
+                            <button class="info-btn" type="button" data-tooltip="Proficiency Bonus = ⌈Level ÷ 4⌉ + 1">ℹ️</button>
+                        </div>
                     </div>
                 </div>
             </section>
@@ -163,7 +173,10 @@
                     </div>
                     <div class="hp-group">
                         <label for="hit-dice">Hit Dice</label>
-                        <input type="text" id="hit-dice" value="1d8" readonly>
+                        <div class="input-with-info">
+                            <input type="text" id="hit-dice" value="1d8" readonly>
+                            <button class="info-btn" type="button" data-tooltip="Hit Dice = Level + Hit Die (based on class: Barbarian d12, Fighter/Paladin/Ranger d10, Most classes d8, Sorcerer/Wizard d6)">ℹ️</button>
+                        </div>
                     </div>
                 </div>
             </section>
@@ -177,15 +190,24 @@
                     <div class="spell-info-grid">
                         <div class="spell-stat">
                             <label for="spellcasting-ability">Spellcasting Ability</label>
-                            <input type="text" id="spellcasting-ability" readonly>
+                            <div class="input-with-info">
+                                <input type="text" id="spellcasting-ability" readonly>
+                                <button class="info-btn" type="button" data-tooltip="Spellcasting Ability varies by class: Bard/Paladin/Sorcerer/Warlock use Charisma, Cleric/Druid/Ranger use Wisdom, Wizard uses Intelligence">ℹ️</button>
+                            </div>
                         </div>
                         <div class="spell-stat">
                             <label for="spell-save-dc">Spell Save DC</label>
-                            <input type="number" id="spell-save-dc" readonly>
+                            <div class="input-with-info">
+                                <input type="number" id="spell-save-dc" readonly>
+                                <button class="info-btn" type="button" data-tooltip="Spell Save DC = 8 + Proficiency Bonus + Spellcasting Ability Modifier">ℹ️</button>
+                            </div>
                         </div>
                         <div class="spell-stat">
                             <label for="spell-attack-bonus">Spell Attack Bonus</label>
-                            <input type="text" id="spell-attack-bonus" readonly>
+                            <div class="input-with-info">
+                                <input type="text" id="spell-attack-bonus" readonly>
+                                <button class="info-btn" type="button" data-tooltip="Spell Attack Bonus = Proficiency Bonus + Spellcasting Ability Modifier">ℹ️</button>
+                            </div>
                         </div>
                     </div>
                 </div>
@@ -235,96 +257,259 @@
             <!-- Skills -->
             <section class="skills">
                 <h2>Skills</h2>
-                <div class="skills-grid">
-                    <div class="skill-item">
-                        <input type="checkbox" id="acrobatics-prof">
-                        <label for="acrobatics-prof">Acrobatics (Dex)</label>
-                        <span class="skill-bonus" id="acrobatics-bonus">+0</span>
+                
+                <!-- Strength Skills -->
+                <div class="ability-skills-group">
+                    <h3 class="ability-header">Strength</h3>
+                    <div class="skills-in-ability">
+                        <div class="skill-item">
+                            <div class="skill-info">
+                                <input type="checkbox" id="athletics-prof">
+                                <label for="athletics-prof">Athletics</label>
+                            </div>
+                            <div class="skill-breakdown">
+                                <span class="ability-mod" id="athletics-ability">+0</span>
+                                <span class="prof-bonus" id="athletics-prof-bonus">+0</span>
+                                <span class="total-bonus" id="athletics-bonus">+0</span>
+                            </div>
+                        </div>
                     </div>
-                    <div class="skill-item">
-                        <input type="checkbox" id="animal-handling-prof">
-                        <label for="animal-handling-prof">Animal Handling (Wis)</label>
-                        <span class="skill-bonus" id="animal-handling-bonus">+0</span>
+                </div>
+
+                <!-- Dexterity Skills -->
+                <div class="ability-skills-group">
+                    <h3 class="ability-header">Dexterity</h3>
+                    <div class="skills-in-ability">
+                        <div class="skill-item">
+                            <div class="skill-info">
+                                <input type="checkbox" id="acrobatics-prof">
+                                <label for="acrobatics-prof">Acrobatics</label>
+                            </div>
+                            <div class="skill-breakdown">
+                                <span class="ability-mod" id="acrobatics-ability">+0</span>
+                                <span class="prof-bonus" id="acrobatics-prof-bonus">+0</span>
+                                <span class="total-bonus" id="acrobatics-bonus">+0</span>
+                            </div>
+                        </div>
+                        <div class="skill-item">
+                            <div class="skill-info">
+                                <input type="checkbox" id="sleight-of-hand-prof">
+                                <label for="sleight-of-hand-prof">Sleight of Hand</label>
+                            </div>
+                            <div class="skill-breakdown">
+                                <span class="ability-mod" id="sleight-of-hand-ability">+0</span>
+                                <span class="prof-bonus" id="sleight-of-hand-prof-bonus">+0</span>
+                                <span class="total-bonus" id="sleight-of-hand-bonus">+0</span>
+                            </div>
+                        </div>
+                        <div class="skill-item">
+                            <div class="skill-info">
+                                <input type="checkbox" id="stealth-prof">
+                                <label for="stealth-prof">Stealth</label>
+                            </div>
+                            <div class="skill-breakdown">
+                                <span class="ability-mod" id="stealth-ability">+0</span>
+                                <span class="prof-bonus" id="stealth-prof-bonus">+0</span>
+                                <span class="total-bonus" id="stealth-bonus">+0</span>
+                            </div>
+                        </div>
                     </div>
-                    <div class="skill-item">
-                        <input type="checkbox" id="arcana-prof">
-                        <label for="arcana-prof">Arcana (Int)</label>
-                        <span class="skill-bonus" id="arcana-bonus">+0</span>
+                </div>
+
+                <!-- Intelligence Skills -->
+                <div class="ability-skills-group">
+                    <h3 class="ability-header">Intelligence</h3>
+                    <div class="skills-in-ability">
+                        <div class="skill-item">
+                            <div class="skill-info">
+                                <input type="checkbox" id="arcana-prof">
+                                <label for="arcana-prof">Arcana</label>
+                            </div>
+                            <div class="skill-breakdown">
+                                <span class="ability-mod" id="arcana-ability">+0</span>
+                                <span class="prof-bonus" id="arcana-prof-bonus">+0</span>
+                                <span class="total-bonus" id="arcana-bonus">+0</span>
+                            </div>
+                        </div>
+                        <div class="skill-item">
+                            <div class="skill-info">
+                                <input type="checkbox" id="history-prof">
+                                <label for="history-prof">History</label>
+                            </div>
+                            <div class="skill-breakdown">
+                                <span class="ability-mod" id="history-ability">+0</span>
+                                <span class="prof-bonus" id="history-prof-bonus">+0</span>
+                                <span class="total-bonus" id="history-bonus">+0</span>
+                            </div>
+                        </div>
+                        <div class="skill-item">
+                            <div class="skill-info">
+                                <input type="checkbox" id="investigation-prof">
+                                <label for="investigation-prof">Investigation</label>
+                            </div>
+                            <div class="skill-breakdown">
+                                <span class="ability-mod" id="investigation-ability">+0</span>
+                                <span class="prof-bonus" id="investigation-prof-bonus">+0</span>
+                                <span class="total-bonus" id="investigation-bonus">+0</span>
+                            </div>
+                        </div>
+                        <div class="skill-item">
+                            <div class="skill-info">
+                                <input type="checkbox" id="nature-prof">
+                                <label for="nature-prof">Nature</label>
+                            </div>
+                            <div class="skill-breakdown">
+                                <span class="ability-mod" id="nature-ability">+0</span>
+                                <span class="prof-bonus" id="nature-prof-bonus">+0</span>
+                                <span class="total-bonus" id="nature-bonus">+0</span>
+                            </div>
+                        </div>
+                        <div class="skill-item">
+                            <div class="skill-info">
+                                <input type="checkbox" id="religion-prof">
+                                <label for="religion-prof">Religion</label>
+                            </div>
+                            <div class="skill-breakdown">
+                                <span class="ability-mod" id="religion-ability">+0</span>
+                                <span class="prof-bonus" id="religion-prof-bonus">+0</span>
+                                <span class="total-bonus" id="religion-bonus">+0</span>
+                            </div>
+                        </div>
                     </div>
-                    <div class="skill-item">
-                        <input type="checkbox" id="athletics-prof">
-                        <label for="athletics-prof">Athletics (Str)</label>
-                        <span class="skill-bonus" id="athletics-bonus">+0</span>
+                </div>
+
+                <!-- Wisdom Skills -->
+                <div class="ability-skills-group">
+                    <h3 class="ability-header">Wisdom</h3>
+                    <div class="skills-in-ability">
+                        <div class="skill-item">
+                            <div class="skill-info">
+                                <input type="checkbox" id="animal-handling-prof">
+                                <label for="animal-handling-prof">Animal Handling</label>
+                            </div>
+                            <div class="skill-breakdown">
+                                <span class="ability-mod" id="animal-handling-ability">+0</span>
+                                <span class="prof-bonus" id="animal-handling-prof-bonus">+0</span>
+                                <span class="total-bonus" id="animal-handling-bonus">+0</span>
+                            </div>
+                        </div>
+                        <div class="skill-item">
+                            <div class="skill-info">
+                                <input type="checkbox" id="insight-prof">
+                                <label for="insight-prof">Insight</label>
+                            </div>
+                            <div class="skill-breakdown">
+                                <span class="ability-mod" id="insight-ability">+0</span>
+                                <span class="prof-bonus" id="insight-prof-bonus">+0</span>
+                                <span class="total-bonus" id="insight-bonus">+0</span>
+                            </div>
+                        </div>
+                        <div class="skill-item">
+                            <div class="skill-info">
+                                <input type="checkbox" id="medicine-prof">
+                                <label for="medicine-prof">Medicine</label>
+                            </div>
+                            <div class="skill-breakdown">
+                                <span class="ability-mod" id="medicine-ability">+0</span>
+                                <span class="prof-bonus" id="medicine-prof-bonus">+0</span>
+                                <span class="total-bonus" id="medicine-bonus">+0</span>
+                            </div>
+                        </div>
+                        <div class="skill-item">
+                            <div class="skill-info">
+                                <input type="checkbox" id="perception-prof">
+                                <label for="perception-prof">Perception</label>
+                            </div>
+                            <div class="skill-breakdown">
+                                <span class="ability-mod" id="perception-ability">+0</span>
+                                <span class="prof-bonus" id="perception-prof-bonus">+0</span>
+                                <span class="total-bonus" id="perception-bonus">+0</span>
+                            </div>
+                        </div>
+                        <div class="skill-item">
+                            <div class="skill-info">
+                                <input type="checkbox" id="survival-prof">
+                                <label for="survival-prof">Survival</label>
+                            </div>
+                            <div class="skill-breakdown">
+                                <span class="ability-mod" id="survival-ability">+0</span>
+                                <span class="prof-bonus" id="survival-prof-bonus">+0</span>
+                                <span class="total-bonus" id="survival-bonus">+0</span>
+                            </div>
+                        </div>
                     </div>
-                    <div class="skill-item">
-                        <input type="checkbox" id="deception-prof">
-                        <label for="deception-prof">Deception (Cha)</label>
-                        <span class="skill-bonus" id="deception-bonus">+0</span>
+                </div>
+
+                <!-- Charisma Skills -->
+                <div class="ability-skills-group">
+                    <h3 class="ability-header">Charisma</h3>
+                    <div class="skills-in-ability">
+                        <div class="skill-item">
+                            <div class="skill-info">
+                                <input type="checkbox" id="deception-prof">
+                                <label for="deception-prof">Deception</label>
+                            </div>
+                            <div class="skill-breakdown">
+                                <span class="ability-mod" id="deception-ability">+0</span>
+                                <span class="prof-bonus" id="deception-prof-bonus">+0</span>
+                                <span class="total-bonus" id="deception-bonus">+0</span>
+                            </div>
+                        </div>
+                        <div class="skill-item">
+                            <div class="skill-info">
+                                <input type="checkbox" id="intimidation-prof">
+                                <label for="intimidation-prof">Intimidation</label>
+                            </div>
+                            <div class="skill-breakdown">
+                                <span class="ability-mod" id="intimidation-ability">+0</span>
+                                <span class="prof-bonus" id="intimidation-prof-bonus">+0</span>
+                                <span class="total-bonus" id="intimidation-bonus">+0</span>
+                            </div>
+                        </div>
+                        <div class="skill-item">
+                            <div class="skill-info">
+                                <input type="checkbox" id="performance-prof">
+                                <label for="performance-prof">Performance</label>
+                            </div>
+                            <div class="skill-breakdown">
+                                <span class="ability-mod" id="performance-ability">+0</span>
+                                <span class="prof-bonus" id="performance-prof-bonus">+0</span>
+                                <span class="total-bonus" id="performance-bonus">+0</span>
+                            </div>
+                        </div>
+                        <div class="skill-item">
+                            <div class="skill-info">
+                                <input type="checkbox" id="persuasion-prof">
+                                <label for="persuasion-prof">Persuasion</label>
+                            </div>
+                            <div class="skill-breakdown">
+                                <span class="ability-mod" id="persuasion-ability">+0</span>
+                                <span class="prof-bonus" id="persuasion-prof-bonus">+0</span>
+                                <span class="total-bonus" id="persuasion-bonus">+0</span>
+                            </div>
+                        </div>
                     </div>
-                    <div class="skill-item">
-                        <input type="checkbox" id="history-prof">
-                        <label for="history-prof">History (Int)</label>
-                        <span class="skill-bonus" id="history-bonus">+0</span>
+                </div>
+
+                <!-- Skills Legend -->
+                <div class="skills-legend">
+                    <div class="legend-header">
+                        <span class="legend-title">Skills Calculation Guide</span>
+                        <button class="info-btn legend-info-btn" type="button" data-tooltip="Skill Total = Ability Modifier + Proficiency Bonus (if proficient). Check the box next to a skill to add your proficiency bonus to that skill.">ℹ️</button>
                     </div>
-                    <div class="skill-item">
-                        <input type="checkbox" id="insight-prof">
-                        <label for="insight-prof">Insight (Wis)</label>
-                        <span class="skill-bonus" id="insight-bonus">+0</span>
-                    </div>
-                    <div class="skill-item">
-                        <input type="checkbox" id="intimidation-prof">
-                        <label for="intimidation-prof">Intimidation (Cha)</label>
-                        <span class="skill-bonus" id="intimidation-bonus">+0</span>
-                    </div>
-                    <div class="skill-item">
-                        <input type="checkbox" id="investigation-prof">
-                        <label for="investigation-prof">Investigation (Int)</label>
-                        <span class="skill-bonus" id="investigation-bonus">+0</span>
-                    </div>
-                    <div class="skill-item">
-                        <input type="checkbox" id="medicine-prof">
-                        <label for="medicine-prof">Medicine (Wis)</label>
-                        <span class="skill-bonus" id="medicine-bonus">+0</span>
-                    </div>
-                    <div class="skill-item">
-                        <input type="checkbox" id="nature-prof">
-                        <label for="nature-prof">Nature (Int)</label>
-                        <span class="skill-bonus" id="nature-bonus">+0</span>
-                    </div>
-                    <div class="skill-item">
-                        <input type="checkbox" id="perception-prof">
-                        <label for="perception-prof">Perception (Wis)</label>
-                        <span class="skill-bonus" id="perception-bonus">+0</span>
-                    </div>
-                    <div class="skill-item">
-                        <input type="checkbox" id="performance-prof">
-                        <label for="performance-prof">Performance (Cha)</label>
-                        <span class="skill-bonus" id="performance-bonus">+0</span>
-                    </div>
-                    <div class="skill-item">
-                        <input type="checkbox" id="persuasion-prof">
-                        <label for="persuasion-prof">Persuasion (Cha)</label>
-                        <span class="skill-bonus" id="persuasion-bonus">+0</span>
-                    </div>
-                    <div class="skill-item">
-                        <input type="checkbox" id="religion-prof">
-                        <label for="religion-prof">Religion (Int)</label>
-                        <span class="skill-bonus" id="religion-bonus">+0</span>
-                    </div>
-                    <div class="skill-item">
-                        <input type="checkbox" id="sleight-of-hand-prof">
-                        <label for="sleight-of-hand-prof">Sleight of Hand (Dex)</label>
-                        <span class="skill-bonus" id="sleight-of-hand-bonus">+0</span>
-                    </div>
-                    <div class="skill-item">
-                        <input type="checkbox" id="stealth-prof">
-                        <label for="stealth-prof">Stealth (Dex)</label>
-                        <span class="skill-bonus" id="stealth-bonus">+0</span>
-                    </div>
-                    <div class="skill-item">
-                        <input type="checkbox" id="survival-prof">
-                        <label for="survival-prof">Survival (Wis)</label>
-                        <span class="skill-bonus" id="survival-bonus">+0</span>
+                    <div class="legend-items">
+                        <div class="legend-item">
+                            <span class="ability-mod sample">+3</span>
+                            <span>Ability Modifier</span>
+                        </div>
+                        <div class="legend-item">
+                            <span class="prof-bonus sample">+2</span>
+                            <span>Proficiency Bonus</span>
+                        </div>
+                        <div class="legend-item">
+                            <span class="total-bonus sample">+5</span>
+                            <span>Total Bonus</span>
+                        </div>
                     </div>
                 </div>
             </section>
@@ -408,6 +593,90 @@
                     <button type="button" class="btn btn-secondary" id="cancel-spell">Cancel</button>
                 </div>
             </form>
+        </div>
+    </div>
+
+    <!-- Save/Load Info Modal -->
+    <div id="save-info-modal" class="modal">
+        <div class="modal-content info-modal">
+            <span class="close" id="save-info-close">&times;</span>
+            <h2>💾 Save & Load Guide</h2>
+            
+            <div class="info-section">
+                <h3>🏠 Local Storage (Browser)</h3>
+                <div class="info-content">
+                    <p><strong>Save Character:</strong> Stores your character in this browser permanently</p>
+                    <p><strong>Load Character:</strong> Switch between multiple saved characters</p>
+                    <p><strong>Auto-Save:</strong> Automatically saves changes as you make them</p>
+                    <div class="info-note">
+                        <strong>Note:</strong> Local storage is tied to this specific browser and computer. 
+                        Clearing browser data will delete saved characters.
+                    </div>
+                </div>
+            </div>
+
+            <div class="info-section">
+                <h3>📁 Export & Import (Files)</h3>
+                <div class="info-content">
+                    <p><strong>Export Character:</strong> Downloads a .json file with all character data</p>
+                    <p><strong>Import Character:</strong> Load a character from an exported .json file</p>
+                    <div class="info-benefits">
+                        <h4>Benefits of Export/Import:</h4>
+                        <ul>
+                            <li>✅ <strong>Backup:</strong> Permanent backup independent of browser</li>
+                            <li>✅ <strong>Sharing:</strong> Send character files to friends or DM</li>
+                            <li>✅ <strong>Cross-Device:</strong> Use same character on different computers</li>
+                            <li>✅ <strong>Session Management:</strong> Export at end of session, import at start of next</li>
+                            <li>✅ <strong>Cloud Storage:</strong> Store files in Google Drive, Dropbox, etc.</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+
+            <div class="info-section">
+                <h3>🎯 Best Practices</h3>
+                <div class="info-content">
+                    <div class="practice-grid">
+                        <div class="practice-item">
+                            <h4>🎲 During Sessions</h4>
+                            <p>Use <strong>Save Character</strong> for quick saves during gameplay</p>
+                        </div>
+                        <div class="practice-item">
+                            <h4>📤 End of Session</h4>
+                            <p>Use <strong>Export Character</strong> to create a backup file</p>
+                        </div>
+                        <div class="practice-item">
+                            <h4>📥 Start of Session</h4>
+                            <p>Use <strong>Import Character</strong> if playing on different device</p>
+                        </div>
+                        <div class="practice-item">
+                            <h4>🔄 Multiple Characters</h4>
+                            <p>Use <strong>Load Character</strong> to switch between different characters</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="info-section">
+                <h3>⚠️ Important Notes</h3>
+                <div class="info-content">
+                    <div class="warning-box">
+                        <p><strong>Local Storage Limitations:</strong></p>
+                        <ul>
+                            <li>Only works in the browser where you saved</li>
+                            <li>Lost if you clear browser data or use incognito mode</li>
+                            <li>Not accessible from other devices</li>
+                        </ul>
+                    </div>
+                    <div class="tip-box">
+                        <p><strong>💡 Pro Tip:</strong> Export your character after major milestones (level ups, important story moments) to create permanent backups!</p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="modal-buttons">
+                <button class="btn btn-primary" id="close-save-info">Got It!</button>
+            </div>
         </div>
     </div>
 

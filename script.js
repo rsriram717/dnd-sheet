@@ -16,6 +16,10 @@ class CharacterSheet {
         document.getElementById('new-character-btn').addEventListener('click', () => this.newCharacter());
         document.getElementById('save-character-btn').addEventListener('click', () => this.saveCharacter());
         document.getElementById('load-character-btn').addEventListener('click', () => this.showLoadModal());
+        document.getElementById('export-character-btn').addEventListener('click', () => this.exportCharacter());
+        document.getElementById('import-character-btn').addEventListener('click', () => this.importCharacter());
+        document.getElementById('import-file-input').addEventListener('change', (e) => this.handleImportFile(e));
+        document.getElementById('save-info-btn').addEventListener('click', () => this.showSaveInfoModal());
 
         // Ability score change events
         const abilityScores = ['strength', 'dexterity', 'constitution', 'intelligence', 'wisdom', 'charisma'];
@@ -78,6 +82,19 @@ class CharacterSheet {
             this.addSpell();
         });
 
+        // Save info modal events
+        const saveInfoModal = document.getElementById('save-info-modal');
+        const saveInfoClose = document.getElementById('save-info-close');
+        const closeSaveInfo = document.getElementById('close-save-info');
+
+        saveInfoClose.addEventListener('click', () => {
+            saveInfoModal.style.display = 'none';
+        });
+
+        closeSaveInfo.addEventListener('click', () => {
+            saveInfoModal.style.display = 'none';
+        });
+
         // Modal events
         const modal = document.getElementById('character-modal');
         const closeBtn = document.querySelector('.close');
@@ -92,6 +109,9 @@ class CharacterSheet {
             }
             if (event.target === spellModal) {
                 spellModal.style.display = 'none';
+            }
+            if (event.target === saveInfoModal) {
+                saveInfoModal.style.display = 'none';
             }
         });
 
@@ -847,24 +867,24 @@ class CharacterSheet {
         const proficiencyBonus = parseInt(document.getElementById('proficiency-bonus').value) || 2;
         
         const skillAbilityMap = {
-            'acrobatics': 'dexterity',
-            'animal-handling': 'wisdom',
-            'arcana': 'intelligence',
             'athletics': 'strength',
-            'deception': 'charisma',
-            'history': 'intelligence',
-            'insight': 'wisdom',
-            'intimidation': 'charisma',
-            'investigation': 'intelligence',
-            'medicine': 'wisdom',
-            'nature': 'intelligence',
-            'perception': 'wisdom',
-            'performance': 'charisma',
-            'persuasion': 'charisma',
-            'religion': 'intelligence',
+            'acrobatics': 'dexterity',
             'sleight-of-hand': 'dexterity',
             'stealth': 'dexterity',
-            'survival': 'wisdom'
+            'arcana': 'intelligence',
+            'history': 'intelligence',
+            'investigation': 'intelligence',
+            'nature': 'intelligence',
+            'religion': 'intelligence',
+            'animal-handling': 'wisdom',
+            'insight': 'wisdom',
+            'medicine': 'wisdom',
+            'perception': 'wisdom',
+            'survival': 'wisdom',
+            'deception': 'charisma',
+            'intimidation': 'charisma',
+            'performance': 'charisma',
+            'persuasion': 'charisma'
         };
 
         Object.entries(skillAbilityMap).forEach(([skill, ability]) => {
@@ -872,9 +892,23 @@ class CharacterSheet {
             const abilityModifier = this.calculateModifier(abilityScore);
             const isProficient = document.getElementById(`${skill}-prof`).checked;
             
-            const skillBonus = abilityModifier + (isProficient ? proficiencyBonus : 0);
-            const bonusElement = document.getElementById(`${skill}-bonus`);
+            const profBonus = isProficient ? proficiencyBonus : 0;
+            const skillBonus = abilityModifier + profBonus;
             
+            // Update ability modifier display
+            const abilityElement = document.getElementById(`${skill}-ability`);
+            if (abilityElement) {
+                abilityElement.textContent = abilityModifier >= 0 ? `+${abilityModifier}` : `${abilityModifier}`;
+            }
+            
+            // Update proficiency bonus display
+            const profElement = document.getElementById(`${skill}-prof-bonus`);
+            if (profElement) {
+                profElement.textContent = profBonus >= 0 ? `+${profBonus}` : `${profBonus}`;
+            }
+            
+            // Update total bonus display
+            const bonusElement = document.getElementById(`${skill}-bonus`);
             if (bonusElement) {
                 bonusElement.textContent = skillBonus >= 0 ? `+${skillBonus}` : `${skillBonus}`;
             }
@@ -1179,6 +1213,93 @@ class CharacterSheet {
             this.updateSpellcasting();
         }
     }
+
+    // Export character data
+    exportCharacter() {
+        const characterData = this.gatherCharacterData();
+        
+        if (!characterData.name || characterData.name.trim() === '') {
+            alert('Please enter a character name before exporting.');
+            return;
+        }
+        
+        // Add export metadata
+        const exportData = {
+            ...characterData,
+            exportDate: new Date().toISOString(),
+            appVersion: '1.0.0'
+        };
+        
+        const json = JSON.stringify(exportData, null, 2);
+        const blob = new Blob([json], { type: 'application/json' });
+        const url = URL.createObjectURL(blob);
+        
+        const link = document.createElement('a');
+        link.href = url;
+        link.download = `${characterData.name.replace(/[^a-z0-9]/gi, '_').toLowerCase()}_character.json`;
+        document.body.appendChild(link);
+        link.click();
+        document.body.removeChild(link);
+        URL.revokeObjectURL(url);
+        
+        alert(`Character "${characterData.name}" exported successfully!`);
+    }
+
+    // Import character data
+    importCharacter() {
+        const fileInput = document.getElementById('import-file-input');
+        fileInput.click();
+    }
+
+    // Handle imported file
+    handleImportFile(e) {
+        const file = e.target.files[0];
+        if (!file) return;
+        
+        if (!file.name.endsWith('.json')) {
+            alert('Please select a valid JSON file.');
+            return;
+        }
+        
+        const reader = new FileReader();
+        reader.onload = (event) => {
+            try {
+                const json = event.target.result;
+                const characterData = JSON.parse(json);
+                
+                // Validate the imported data has required fields
+                if (!characterData.name) {
+                    alert('Invalid character file: missing character name.');
+                    return;
+                }
+                
+                // Load the character data
+                this.loadCharacterData(characterData);
+                this.currentCharacter = null; // Clear current character to prevent auto-save conflicts
+                
+                alert(`Character "${characterData.name}" imported successfully!\nRemember to save if you want to store it locally.`);
+                
+            } catch (error) {
+                alert('Error reading character file. Please make sure it\'s a valid character export.');
+                console.error('Import error:', error);
+            }
+        };
+        
+        reader.onerror = () => {
+            alert('Error reading file. Please try again.');
+        };
+        
+        reader.readAsText(file);
+        
+        // Clear the file input so the same file can be imported again if needed
+        e.target.value = '';
+    }
+
+    // Show save info modal
+    showSaveInfoModal() {
+        const saveInfoModal = document.getElementById('save-info-modal');
+        saveInfoModal.style.display = 'block';
+    }
 }
 
 // Initialize the application when the page loads
@@ -1189,4 +1310,42 @@ document.addEventListener('DOMContentLoaded', () => {
 });
 
 // Make characterSheet globally accessible for event handlers
-window.characterSheet = characterSheet; 
+window.characterSheet = characterSheet;
+
+// Info button tooltip handling for touch devices
+document.addEventListener('DOMContentLoaded', function() {
+    const infoButtons = document.querySelectorAll('.info-btn');
+    
+    infoButtons.forEach(button => {
+        // For touch devices, show tooltip on click
+        button.addEventListener('click', function(e) {
+            e.preventDefault();
+            e.stopPropagation();
+            
+            // Toggle tooltip visibility for touch devices
+            if (window.innerWidth <= 768 || 'ontouchstart' in window) {
+                const isVisible = button.classList.contains('tooltip-visible');
+                
+                // Hide all other tooltips
+                infoButtons.forEach(btn => btn.classList.remove('tooltip-visible'));
+                
+                // Toggle current tooltip
+                if (!isVisible) {
+                    button.classList.add('tooltip-visible');
+                    
+                    // Hide after 3 seconds
+                    setTimeout(() => {
+                        button.classList.remove('tooltip-visible');
+                    }, 3000);
+                }
+            }
+        });
+    });
+    
+    // Hide tooltips when clicking elsewhere
+    document.addEventListener('click', function(e) {
+        if (!e.target.classList.contains('info-btn')) {
+            infoButtons.forEach(btn => btn.classList.remove('tooltip-visible'));
+        }
+    });
+}); 
