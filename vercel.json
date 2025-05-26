@@ -1,0 +1,5 @@
+{
+    "redirects": [
+      { "source": "/", "destination": "/dnd-sheet", "permanent": false }
+    ]
+  }
