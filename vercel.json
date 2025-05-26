@@ -1,6 +1,6 @@
 {
   "rewrites": [
-    { "source": "/dnd-sheet/(.*)", "destination": "/dnd-sheet/$1" },
-    { "source": "/dnd-sheet", "destination": "/dnd-sheet/index.html" }
+    { "source": "/dnd-sheet/(.*)", "destination": "/$1" },
+    { "source": "/dnd-sheet", "destination": "/index.html" }
   ]
 }
