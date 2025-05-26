@@ -1,0 +1,685 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>D&D 5e Character Sheet Tracker</title>
+    <link rel="stylesheet" href="styles.css">
+    <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;600&family=Open+Sans:wght@300;400;600&display=swap" rel="stylesheet">
+</head>
+<body>
+    <div class="app-container">
+        <header class="app-header">
+            <h1>D&D 5e Character Sheet</h1>
+            <div class="header-controls">
+                <button id="new-character-btn" class="btn btn-primary">New Character</button>
+                <button id="save-character-btn" class="btn btn-secondary">Save Character</button>
+                <button id="load-character-btn" class="btn btn-secondary">Load Character</button>
+                <button id="export-character-btn" class="btn btn-secondary">Export Character</button>
+                <button id="import-character-btn" class="btn btn-secondary">Import Character</button>
+                <button id="save-info-btn" class="btn btn-info" title="Save/Load Help">ℹ️</button>
+                <input type="file" id="import-file-input" accept=".json" style="display: none;">
+            </div>
+        </header>
+
+        <main class="character-sheet">
+            <!-- Character Basic Info -->
+            <section class="character-basics">
+                <div class="basic-info-grid">
+                    <div class="form-group">
+                        <label for="character-name">Character Name</label>
+                        <input type="text" id="character-name" placeholder="Enter character name">
+                    </div>
+                    <div class="form-group">
+                        <label for="character-class">Class</label>
+                        <select id="character-class">
+                            <option value="">Select Class</option>
+                            <option value="barbarian">Barbarian</option>
+                            <option value="bard">Bard</option>
+                            <option value="cleric">Cleric</option>
+                            <option value="druid">Druid</option>
+                            <option value="fighter">Fighter</option>
+                            <option value="monk">Monk</option>
+                            <option value="paladin">Paladin</option>
+                            <option value="ranger">Ranger</option>
+                            <option value="rogue">Rogue</option>
+                            <option value="sorcerer">Sorcerer</option>
+                            <option value="warlock">Warlock</option>
+                            <option value="wizard">Wizard</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label for="character-race">Race</label>
+                        <select id="character-race">
+                            <option value="">Select Race</option>
+                            <option value="dragonborn">Dragonborn</option>
+                            <option value="dwarf">Dwarf</option>
+                            <option value="elf">Elf</option>
+                            <option value="gnome">Gnome</option>
+                            <option value="half-elf">Half-Elf</option>
+                            <option value="halfling">Halfling</option>
+                            <option value="half-orc">Half-Orc</option>
+                            <option value="human">Human</option>
+                            <option value="tiefling">Tiefling</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label for="character-background">Background</label>
+                        <input type="text" id="character-background" placeholder="e.g., Acolyte, Criminal">
+                    </div>
+                    <div class="form-group">
+                        <label for="character-level">Level</label>
+                        <input type="number" id="character-level" min="1" max="20" value="1">
+                    </div>
+                    <div class="form-group">
+                        <label for="character-alignment">Alignment</label>
+                        <select id="character-alignment">
+                            <option value="">Select Alignment</option>
+                            <option value="lawful-good">Lawful Good</option>
+                            <option value="neutral-good">Neutral Good</option>
+                            <option value="chaotic-good">Chaotic Good</option>
+                            <option value="lawful-neutral">Lawful Neutral</option>
+                            <option value="true-neutral">True Neutral</option>
+                            <option value="chaotic-neutral">Chaotic Neutral</option>
+                            <option value="lawful-evil">Lawful Evil</option>
+                            <option value="neutral-evil">Neutral Evil</option>
+                            <option value="chaotic-evil">Chaotic Evil</option>
+                        </select>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Ability Scores -->
+            <section class="ability-scores">
+                <h2>Ability Scores</h2>
+                <div class="abilities-grid">
+                    <div class="ability-score">
+                        <label>Strength</label>
+                        <input type="number" id="strength" min="1" max="30" value="10">
+                        <div class="modifier" id="strength-mod">+0</div>
+                    </div>
+                    <div class="ability-score">
+                        <label>Dexterity</label>
+                        <input type="number" id="dexterity" min="1" max="30" value="10">
+                        <div class="modifier" id="dexterity-mod">+0</div>
+                    </div>
+                    <div class="ability-score">
+                        <label>Constitution</label>
+                        <input type="number" id="constitution" min="1" max="30" value="10">
+                        <div class="modifier" id="constitution-mod">+0</div>
+                    </div>
+                    <div class="ability-score">
+                        <label>Intelligence</label>
+                        <input type="number" id="intelligence" min="1" max="30" value="10">
+                        <div class="modifier" id="intelligence-mod">+0</div>
+                    </div>
+                    <div class="ability-score">
+                        <label>Wisdom</label>
+                        <input type="number" id="wisdom" min="1" max="30" value="10">
+                        <div class="modifier" id="wisdom-mod">+0</div>
+                    </div>
+                    <div class="ability-score">
+                        <label>Charisma</label>
+                        <input type="number" id="charisma" min="1" max="30" value="10">
+                        <div class="modifier" id="charisma-mod">+0</div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Combat Stats -->
+            <section class="combat-stats">
+                <h2>Combat Stats</h2>
+                <div class="combat-grid">
+                    <div class="stat-group">
+                        <label for="armor-class">Armor Class</label>
+                        <input type="number" id="armor-class" min="1" value="10">
+                    </div>
+                    <div class="stat-group">
+                        <label for="initiative">Initiative</label>
+                        <div class="input-with-info">
+                            <input type="number" id="initiative" value="0" readonly>
+                            <button class="info-btn" type="button" data-tooltip="Initiative = Dexterity Modifier">ℹ️</button>
+                        </div>
+                    </div>
+                    <div class="stat-group">
+                        <label for="speed">Speed</label>
+                        <input type="number" id="speed" min="0" value="30">
+                    </div>
+                    <div class="stat-group">
+                        <label for="proficiency-bonus">Proficiency Bonus</label>
+                        <div class="input-with-info">
+                            <input type="number" id="proficiency-bonus" value="2" readonly>
+                            <button class="info-btn" type="button" data-tooltip="Proficiency Bonus = ⌈Level ÷ 4⌉ + 1">ℹ️</button>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Hit Points -->
+            <section class="hit-points">
+                <h2>Hit Points</h2>
+                <div class="hp-grid">
+                    <div class="hp-group">
+                        <label for="max-hp">Maximum HP</label>
+                        <input type="number" id="max-hp" min="1" value="8">
+                    </div>
+                    <div class="hp-group">
+                        <label for="current-hp">Current HP</label>
+                        <input type="number" id="current-hp" min="0" value="8">
+                    </div>
+                    <div class="hp-group">
+                        <label for="temp-hp">Temporary HP</label>
+                        <input type="number" id="temp-hp" min="0" value="0">
+                    </div>
+                    <div class="hp-group">
+                        <label for="hit-dice">Hit Dice</label>
+                        <div class="input-with-info">
+                            <input type="text" id="hit-dice" value="1d8" readonly>
+                            <button class="info-btn" type="button" data-tooltip="Hit Dice = Level + Hit Die (based on class: Barbarian d12, Fighter/Paladin/Ranger d10, Most classes d8, Sorcerer/Wizard d6)">ℹ️</button>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Spellcasting Section -->
+            <section class="spellcasting" id="spellcasting-section" style="display: none;">
+                <h2>Spellcasting</h2>
+                
+                <!-- Spellcasting Info -->
+                <div class="spellcasting-info">
+                    <div class="spell-info-grid">
+                        <div class="spell-stat">
+                            <label for="spellcasting-ability">Spellcasting Ability</label>
+                            <div class="input-with-info">
+                                <input type="text" id="spellcasting-ability" readonly>
+                                <button class="info-btn" type="button" data-tooltip="Spellcasting Ability varies by class: Bard/Paladin/Sorcerer/Warlock use Charisma, Cleric/Druid/Ranger use Wisdom, Wizard uses Intelligence">ℹ️</button>
+                            </div>
+                        </div>
+                        <div class="spell-stat">
+                            <label for="spell-save-dc">Spell Save DC</label>
+                            <div class="input-with-info">
+                                <input type="number" id="spell-save-dc" readonly>
+                                <button class="info-btn" type="button" data-tooltip="Spell Save DC = 8 + Proficiency Bonus + Spellcasting Ability Modifier">ℹ️</button>
+                            </div>
+                        </div>
+                        <div class="spell-stat">
+                            <label for="spell-attack-bonus">Spell Attack Bonus</label>
+                            <div class="input-with-info">
+                                <input type="text" id="spell-attack-bonus" readonly>
+                                <button class="info-btn" type="button" data-tooltip="Spell Attack Bonus = Proficiency Bonus + Spellcasting Ability Modifier">ℹ️</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Cantrips -->
+                <div class="cantrips-section">
+                    <h3>Cantrips</h3>
+                    <div class="cantrips-controls">
+                        <button id="add-cantrip-btn" class="btn btn-small">Add Cantrip</button>
+                        <span class="cantrips-known">Known: <span id="cantrips-count">0</span>/<span id="cantrips-max">0</span></span>
+                    </div>
+                    <div id="cantrips-list" class="spells-list"></div>
+                </div>
+
+                <!-- Spell Slots -->
+                <div class="spell-slots-section">
+                    <h3>Spell Slots</h3>
+                    <div class="spell-slots-grid" id="spell-slots-grid">
+                        <!-- Spell slots will be generated dynamically -->
+                    </div>
+                    <div class="spell-slots-controls">
+                        <button id="short-rest-btn" class="btn btn-small">Short Rest</button>
+                        <button id="long-rest-btn" class="btn btn-small">Long Rest</button>
+                    </div>
+                </div>
+
+                <!-- Known/Prepared Spells -->
+                <div class="known-spells-section">
+                    <h3 id="spells-section-title">Known Spells</h3>
+                    <div class="spells-controls">
+                        <button id="add-spell-btn" class="btn btn-small">Add Spell</button>
+                        <span class="spells-known">Known: <span id="spells-count">0</span>/<span id="spells-max">0</span></span>
+                    </div>
+                    
+                    <!-- Spell Level Tabs -->
+                    <div class="spell-level-tabs" id="spell-level-tabs">
+                        <!-- Tabs will be generated dynamically -->
+                    </div>
+                    
+                    <!-- Spell Lists by Level -->
+                    <div id="spell-lists-container">
+                        <!-- Spell lists will be generated dynamically -->
+                    </div>
+                </div>
+            </section>
+
+            <!-- Skills -->
+            <section class="skills">
+                <h2>Skills</h2>
+                
+                <!-- Strength Skills -->
+                <div class="ability-skills-group">
+                    <h3 class="ability-header">Strength</h3>
+                    <div class="skills-in-ability">
+                        <div class="skill-item">
+                            <div class="skill-info">
+                                <input type="checkbox" id="athletics-prof">
+                                <label for="athletics-prof">Athletics</label>
+                            </div>
+                            <div class="skill-breakdown">
+                                <span class="ability-mod" id="athletics-ability">+0</span>
+                                <span class="prof-bonus" id="athletics-prof-bonus">+0</span>
+                                <span class="total-bonus" id="athletics-bonus">+0</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Dexterity Skills -->
+                <div class="ability-skills-group">
+                    <h3 class="ability-header">Dexterity</h3>
+                    <div class="skills-in-ability">
+                        <div class="skill-item">
+                            <div class="skill-info">
+                                <input type="checkbox" id="acrobatics-prof">
+                                <label for="acrobatics-prof">Acrobatics</label>
+                            </div>
+                            <div class="skill-breakdown">
+                                <span class="ability-mod" id="acrobatics-ability">+0</span>
+                                <span class="prof-bonus" id="acrobatics-prof-bonus">+0</span>
+                                <span class="total-bonus" id="acrobatics-bonus">+0</span>
+                            </div>
+                        </div>
+                        <div class="skill-item">
+                            <div class="skill-info">
+                                <input type="checkbox" id="sleight-of-hand-prof">
+                                <label for="sleight-of-hand-prof">Sleight of Hand</label>
+                            </div>
+                            <div class="skill-breakdown">
+                                <span class="ability-mod" id="sleight-of-hand-ability">+0</span>
+                                <span class="prof-bonus" id="sleight-of-hand-prof-bonus">+0</span>
+                                <span class="total-bonus" id="sleight-of-hand-bonus">+0</span>
+                            </div>
+                        </div>
+                        <div class="skill-item">
+                            <div class="skill-info">
+                                <input type="checkbox" id="stealth-prof">
+                                <label for="stealth-prof">Stealth</label>
+                            </div>
+                            <div class="skill-breakdown">
+                                <span class="ability-mod" id="stealth-ability">+0</span>
+                                <span class="prof-bonus" id="stealth-prof-bonus">+0</span>
+                                <span class="total-bonus" id="stealth-bonus">+0</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Intelligence Skills -->
+                <div class="ability-skills-group">
+                    <h3 class="ability-header">Intelligence</h3>
+                    <div class="skills-in-ability">
+                        <div class="skill-item">
+                            <div class="skill-info">
+                                <input type="checkbox" id="arcana-prof">
+                                <label for="arcana-prof">Arcana</label>
+                            </div>
+                            <div class="skill-breakdown">
+                                <span class="ability-mod" id="arcana-ability">+0</span>
+                                <span class="prof-bonus" id="arcana-prof-bonus">+0</span>
+                                <span class="total-bonus" id="arcana-bonus">+0</span>
+                            </div>
+                        </div>
+                        <div class="skill-item">
+                            <div class="skill-info">
+                                <input type="checkbox" id="history-prof">
+                                <label for="history-prof">History</label>
+                            </div>
+                            <div class="skill-breakdown">
+                                <span class="ability-mod" id="history-ability">+0</span>
+                                <span class="prof-bonus" id="history-prof-bonus">+0</span>
+                                <span class="total-bonus" id="history-bonus">+0</span>
+                            </div>
+                        </div>
+                        <div class="skill-item">
+                            <div class="skill-info">
+                                <input type="checkbox" id="investigation-prof">
+                                <label for="investigation-prof">Investigation</label>
+                            </div>
+                            <div class="skill-breakdown">
+                                <span class="ability-mod" id="investigation-ability">+0</span>
+                                <span class="prof-bonus" id="investigation-prof-bonus">+0</span>
+                                <span class="total-bonus" id="investigation-bonus">+0</span>
+                            </div>
+                        </div>
+                        <div class="skill-item">
+                            <div class="skill-info">
+                                <input type="checkbox" id="nature-prof">
+                                <label for="nature-prof">Nature</label>
+                            </div>
+                            <div class="skill-breakdown">
+                                <span class="ability-mod" id="nature-ability">+0</span>
+                                <span class="prof-bonus" id="nature-prof-bonus">+0</span>
+                                <span class="total-bonus" id="nature-bonus">+0</span>
+                            </div>
+                        </div>
+                        <div class="skill-item">
+                            <div class="skill-info">
+                                <input type="checkbox" id="religion-prof">
+                                <label for="religion-prof">Religion</label>
+                            </div>
+                            <div class="skill-breakdown">
+                                <span class="ability-mod" id="religion-ability">+0</span>
+                                <span class="prof-bonus" id="religion-prof-bonus">+0</span>
+                                <span class="total-bonus" id="religion-bonus">+0</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Wisdom Skills -->
+                <div class="ability-skills-group">
+                    <h3 class="ability-header">Wisdom</h3>
+                    <div class="skills-in-ability">
+                        <div class="skill-item">
+                            <div class="skill-info">
+                                <input type="checkbox" id="animal-handling-prof">
+                                <label for="animal-handling-prof">Animal Handling</label>
+                            </div>
+                            <div class="skill-breakdown">
+                                <span class="ability-mod" id="animal-handling-ability">+0</span>
+                                <span class="prof-bonus" id="animal-handling-prof-bonus">+0</span>
+                                <span class="total-bonus" id="animal-handling-bonus">+0</span>
+                            </div>
+                        </div>
+                        <div class="skill-item">
+                            <div class="skill-info">
+                                <input type="checkbox" id="insight-prof">
+                                <label for="insight-prof">Insight</label>
+                            </div>
+                            <div class="skill-breakdown">
+                                <span class="ability-mod" id="insight-ability">+0</span>
+                                <span class="prof-bonus" id="insight-prof-bonus">+0</span>
+                                <span class="total-bonus" id="insight-bonus">+0</span>
+                            </div>
+                        </div>
+                        <div class="skill-item">
+                            <div class="skill-info">
+                                <input type="checkbox" id="medicine-prof">
+                                <label for="medicine-prof">Medicine</label>
+                            </div>
+                            <div class="skill-breakdown">
+                                <span class="ability-mod" id="medicine-ability">+0</span>
+                                <span class="prof-bonus" id="medicine-prof-bonus">+0</span>
+                                <span class="total-bonus" id="medicine-bonus">+0</span>
+                            </div>
+                        </div>
+                        <div class="skill-item">
+                            <div class="skill-info">
+                                <input type="checkbox" id="perception-prof">
+                                <label for="perception-prof">Perception</label>
+                            </div>
+                            <div class="skill-breakdown">
+                                <span class="ability-mod" id="perception-ability">+0</span>
+                                <span class="prof-bonus" id="perception-prof-bonus">+0</span>
+                                <span class="total-bonus" id="perception-bonus">+0</span>
+                            </div>
+                        </div>
+                        <div class="skill-item">
+                            <div class="skill-info">
+                                <input type="checkbox" id="survival-prof">
+                                <label for="survival-prof">Survival</label>
+                            </div>
+                            <div class="skill-breakdown">
+                                <span class="ability-mod" id="survival-ability">+0</span>
+                                <span class="prof-bonus" id="survival-prof-bonus">+0</span>
+                                <span class="total-bonus" id="survival-bonus">+0</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Charisma Skills -->
+                <div class="ability-skills-group">
+                    <h3 class="ability-header">Charisma</h3>
+                    <div class="skills-in-ability">
+                        <div class="skill-item">
+                            <div class="skill-info">
+                                <input type="checkbox" id="deception-prof">
+                                <label for="deception-prof">Deception</label>
+                            </div>
+                            <div class="skill-breakdown">
+                                <span class="ability-mod" id="deception-ability">+0</span>
+                                <span class="prof-bonus" id="deception-prof-bonus">+0</span>
+                                <span class="total-bonus" id="deception-bonus">+0</span>
+                            </div>
+                        </div>
+                        <div class="skill-item">
+                            <div class="skill-info">
+                                <input type="checkbox" id="intimidation-prof">
+                                <label for="intimidation-prof">Intimidation</label>
+                            </div>
+                            <div class="skill-breakdown">
+                                <span class="ability-mod" id="intimidation-ability">+0</span>
+                                <span class="prof-bonus" id="intimidation-prof-bonus">+0</span>
+                                <span class="total-bonus" id="intimidation-bonus">+0</span>
+                            </div>
+                        </div>
+                        <div class="skill-item">
+                            <div class="skill-info">
+                                <input type="checkbox" id="performance-prof">
+                                <label for="performance-prof">Performance</label>
+                            </div>
+                            <div class="skill-breakdown">
+                                <span class="ability-mod" id="performance-ability">+0</span>
+                                <span class="prof-bonus" id="performance-prof-bonus">+0</span>
+                                <span class="total-bonus" id="performance-bonus">+0</span>
+                            </div>
+                        </div>
+                        <div class="skill-item">
+                            <div class="skill-info">
+                                <input type="checkbox" id="persuasion-prof">
+                                <label for="persuasion-prof">Persuasion</label>
+                            </div>
+                            <div class="skill-breakdown">
+                                <span class="ability-mod" id="persuasion-ability">+0</span>
+                                <span class="prof-bonus" id="persuasion-prof-bonus">+0</span>
+                                <span class="total-bonus" id="persuasion-bonus">+0</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Skills Legend -->
+                <div class="skills-legend">
+                    <div class="legend-header">
+                        <span class="legend-title">Skills Calculation Guide</span>
+                        <button class="info-btn legend-info-btn" type="button" data-tooltip="Skill Total = Ability Modifier + Proficiency Bonus (if proficient). Check the box next to a skill to add your proficiency bonus to that skill.">ℹ️</button>
+                    </div>
+                    <div class="legend-items">
+                        <div class="legend-item">
+                            <span class="ability-mod sample">+3</span>
+                            <span>Ability Modifier</span>
+                        </div>
+                        <div class="legend-item">
+                            <span class="prof-bonus sample">+2</span>
+                            <span>Proficiency Bonus</span>
+                        </div>
+                        <div class="legend-item">
+                            <span class="total-bonus sample">+5</span>
+                            <span>Total Bonus</span>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Equipment & Notes -->
+            <section class="equipment-notes">
+                <div class="equipment-notes-grid">
+                    <div class="equipment-section">
+                        <h3>Equipment</h3>
+                        <textarea id="equipment" placeholder="List your equipment, weapons, and armor here..."></textarea>
+                    </div>
+                    <div class="notes-section">
+                        <h3>Notes & Features</h3>
+                        <textarea id="notes" placeholder="Character features, traits, spells, and campaign notes..."></textarea>
+                    </div>
+                </div>
+            </section>
+        </main>
+    </div>
+
+    <!-- Character Selection Modal -->
+    <div id="character-modal" class="modal">
+        <div class="modal-content">
+            <span class="close">&times;</span>
+            <h2>Saved Characters</h2>
+            <div id="character-list"></div>
+        </div>
+    </div>
+
+    <!-- Spell Modal -->
+    <div id="spell-modal" class="modal">
+        <div class="modal-content">
+            <span class="close" id="spell-modal-close">&times;</span>
+            <h2 id="spell-modal-title">Add Spell</h2>
+            <form id="spell-form">
+                <div class="form-group">
+                    <label for="spell-name">Spell Name</label>
+                    <input type="text" id="spell-name" required>
+                </div>
+                <div class="form-group">
+                    <label for="spell-level">Spell Level</label>
+                    <select id="spell-level" required>
+                        <option value="0">Cantrip</option>
+                        <option value="1">1st Level</option>
+                        <option value="2">2nd Level</option>
+                        <option value="3">3rd Level</option>
+                        <option value="4">4th Level</option>
+                        <option value="5">5th Level</option>
+                        <option value="6">6th Level</option>
+                        <option value="7">7th Level</option>
+                        <option value="8">8th Level</option>
+                        <option value="9">9th Level</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label for="spell-school">School</label>
+                    <select id="spell-school">
+                        <option value="">Select School</option>
+                        <option value="abjuration">Abjuration</option>
+                        <option value="conjuration">Conjuration</option>
+                        <option value="divination">Divination</option>
+                        <option value="enchantment">Enchantment</option>
+                        <option value="evocation">Evocation</option>
+                        <option value="illusion">Illusion</option>
+                        <option value="necromancy">Necromancy</option>
+                        <option value="transmutation">Transmutation</option>
+                    </select>
+                </div>
+                <div class="form-group" id="prepared-group" style="display: none;">
+                    <label>
+                        <input type="checkbox" id="spell-prepared">
+                        Prepared
+                    </label>
+                </div>
+                <div class="form-group">
+                    <label for="spell-description">Description (Optional)</label>
+                    <textarea id="spell-description" placeholder="Spell description, components, range, etc."></textarea>
+                </div>
+                <div class="modal-buttons">
+                    <button type="submit" class="btn btn-primary">Add Spell</button>
+                    <button type="button" class="btn btn-secondary" id="cancel-spell">Cancel</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Save/Load Info Modal -->
+    <div id="save-info-modal" class="modal">
+        <div class="modal-content info-modal">
+            <span class="close" id="save-info-close">&times;</span>
+            <h2>💾 Save & Load Guide</h2>
+            
+            <div class="info-section">
+                <h3>🏠 Local Storage (Browser)</h3>
+                <div class="info-content">
+                    <p><strong>Save Character:</strong> Stores your character in this browser permanently</p>
+                    <p><strong>Load Character:</strong> Switch between multiple saved characters</p>
+                    <p><strong>Auto-Save:</strong> Automatically saves changes as you make them</p>
+                    <div class="info-note">
+                        <strong>Note:</strong> Local storage is tied to this specific browser and computer. 
+                        Clearing browser data will delete saved characters.
+                    </div>
+                </div>
+            </div>
+
+            <div class="info-section">
+                <h3>📁 Export & Import (Files)</h3>
+                <div class="info-content">
+                    <p><strong>Export Character:</strong> Downloads a .json file with all character data</p>
+                    <p><strong>Import Character:</strong> Load a character from an exported .json file</p>
+                    <div class="info-benefits">
+                        <h4>Benefits of Export/Import:</h4>
+                        <ul>
+                            <li>✅ <strong>Backup:</strong> Permanent backup independent of browser</li>
+                            <li>✅ <strong>Sharing:</strong> Send character files to friends or DM</li>
+                            <li>✅ <strong>Cross-Device:</strong> Use same character on different computers</li>
+                            <li>✅ <strong>Session Management:</strong> Export at end of session, import at start of next</li>
+                            <li>✅ <strong>Cloud Storage:</strong> Store files in Google Drive, Dropbox, etc.</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+
+            <div class="info-section">
+                <h3>🎯 Best Practices</h3>
+                <div class="info-content">
+                    <div class="practice-grid">
+                        <div class="practice-item">
+                            <h4>🎲 During Sessions</h4>
+                            <p>Use <strong>Save Character</strong> for quick saves during gameplay</p>
+                        </div>
+                        <div class="practice-item">
+                            <h4>📤 End of Session</h4>
+                            <p>Use <strong>Export Character</strong> to create a backup file</p>
+                        </div>
+                        <div class="practice-item">
+                            <h4>📥 Start of Session</h4>
+                            <p>Use <strong>Import Character</strong> if playing on different device</p>
+                        </div>
+                        <div class="practice-item">
+                            <h4>🔄 Multiple Characters</h4>
+                            <p>Use <strong>Load Character</strong> to switch between different characters</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="info-section">
+                <h3>⚠️ Important Notes</h3>
+                <div class="info-content">
+                    <div class="warning-box">
+                        <p><strong>Local Storage Limitations:</strong></p>
+                        <ul>
+                            <li>Only works in the browser where you saved</li>
+                            <li>Lost if you clear browser data or use incognito mode</li>
+                            <li>Not accessible from other devices</li>
+                        </ul>
+                    </div>
+                    <div class="tip-box">
+                        <p><strong>💡 Pro Tip:</strong> Export your character after major milestones (level ups, important story moments) to create permanent backups!</p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="modal-buttons">
+                <button class="btn btn-primary" id="close-save-info">Got It!</button>
+            </div>
+        </div>
+    </div>
+
+    <script src="script.js"></script>
+</body>
+</html> 

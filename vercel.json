@@ -1,5 +1,6 @@
 {
-    "redirects": [
-      { "source": "/", "destination": "/dnd-sheet", "permanent": false }
-    ]
-  }
+  "rewrites": [
+    { "source": "/dnd-sheet/(.*)", "destination": "/dnd-sheet/$1" },
+    { "source": "/dnd-sheet", "destination": "/dnd-sheet/index.html" }
+  ]
+}
