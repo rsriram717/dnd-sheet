@@ -431,28 +431,34 @@ class CharacterSheet {
         const characterClass = document.getElementById('character-class').value;
         const level = parseInt(document.getElementById('character-level').value) || 1;
         const data = this.getSpellcastingData();
+        const spellsLimitDisplay = document.getElementById('spells-limit-display');
         
-        let maxSpells = 0;
-        
-        if (data.preparationMethod[characterClass] === 'prepared') {
-            // Prepared casters: Level + ability modifier
-            const spellcastingAbility = data.spellcastingAbility[characterClass];
-            const abilityScore = parseInt(document.getElementById(spellcastingAbility).value) || 10;
-            const abilityModifier = Math.max(1, this.calculateModifier(abilityScore));
-            maxSpells = level + abilityModifier;
+        if (characterClass === 'wizard') {
+            spellsLimitDisplay.style.display = 'none';
         } else {
-            // Known casters: Fixed by level
-            const spellsData = data.spellsKnown[characterClass];
-            if (spellsData) {
-                for (const levelThreshold in spellsData) {
-                    if (level >= parseInt(levelThreshold)) {
-                        maxSpells = spellsData[levelThreshold];
+            spellsLimitDisplay.style.display = 'inline';
+            let maxSpells = 0;
+            
+            if (data.preparationMethod[characterClass] === 'prepared') {
+                // Prepared casters: Level + ability modifier
+                const spellcastingAbility = data.spellcastingAbility[characterClass];
+                const abilityScore = parseInt(document.getElementById(spellcastingAbility).value) || 10;
+                const abilityModifier = Math.max(1, this.calculateModifier(abilityScore));
+                maxSpells = level + abilityModifier;
+            } else {
+                // Known casters: Fixed by level
+                const spellsData = data.spellsKnown[characterClass];
+                if (spellsData) {
+                    for (const levelThreshold in spellsData) {
+                        if (level >= parseInt(levelThreshold)) {
+                            maxSpells = spellsData[levelThreshold];
+                        }
                     }
                 }
             }
+            document.getElementById('spells-max').textContent = maxSpells;
         }
 
-        document.getElementById('spells-max').textContent = maxSpells;
         document.getElementById('spells-count').textContent = this.spells.length;
     }
 
@@ -792,11 +798,14 @@ class CharacterSheet {
             this.renderCantrips();
             this.updateCantripsKnown();
         } else {
-            // Check spell limit
-            const maxSpells = parseInt(document.getElementById('spells-max').textContent) || 0;
-            if (this.spells.length >= maxSpells) {
-                alert(`You can only know/prepare ${maxSpells} spells at your current level.`);
-                return;
+            const characterClass = document.getElementById('character-class').value;
+            // Check spell limit, but not for Wizards
+            if (characterClass !== 'wizard') {
+                const maxSpells = parseInt(document.getElementById('spells-max').textContent) || 0;
+                if (this.spells.length >= maxSpells) {
+                    alert(`You can only know/prepare ${maxSpells} spells at your current level.`);
+                    return;
+                }
             }
             this.spells.push(spell);
             this.updateSpellsKnown();
