@@ -60,6 +60,21 @@ function createNoteElement(note) {
     noteEl.appendChild(header);
     noteEl.appendChild(content);
 
+    // Add the editing area (initially hidden)
+    const editArea = document.createElement('div');
+    editArea.classList.add('journal-note-edit-area');
+    
+    const editTextarea = document.createElement('textarea');
+    editTextarea.value = note.text;
+    
+    const saveEditBtn = document.createElement('button');
+    saveEditBtn.classList.add('btn', 'btn-small', 'save-note-btn');
+    saveEditBtn.textContent = 'Save';
+
+    editArea.appendChild(editTextarea);
+    editArea.appendChild(saveEditBtn);
+    noteEl.appendChild(editArea);
+
     return noteEl;
 }
 
@@ -187,6 +202,29 @@ export function init(options) {
                 }, { once: true });
             }
             return; // Exit early
+        }
+
+        // Edit note - listen for clicks on the content area
+        if (e.target.classList.contains('journal-note-content')) {
+            noteEl.classList.add('editing');
+            noteEl.querySelector('textarea').focus();
+        }
+
+        // Save edited note
+        if (e.target.classList.contains('save-note-btn')) {
+            const newText = noteEl.querySelector('textarea').value.trim();
+            if (newText) {
+                updatedNotes = notes.map(note => {
+                    if (note.id === noteId) {
+                        return { ...note, text: newText };
+                    }
+                    return note;
+                });
+                onNoteChange(updatedNotes);
+                // Just update the text content and switch back view
+                noteEl.querySelector('.journal-note-content').textContent = newText;
+                noteEl.classList.remove('editing');
+            }
         }
     });
 

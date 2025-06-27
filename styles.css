@@ -1418,4 +1418,26 @@ section {
     animation: noteFadeOut 0.3s ease-out forwards;
 }
 
+/* Styles for when a note is being edited */
+.journal-note.editing .journal-note-content {
+    display: none; /* Hide the static text */
+}
+
+.journal-note-edit-area {
+    display: none; /* Hidden by default */
+    flex-direction: column;
+    gap: 8px;
+    margin-top: 10px;
+}
+
+.journal-note.editing .journal-note-edit-area {
+    display: flex; /* Show when editing */
+}
+
+.journal-note-edit-area textarea {
+    width: 100%;
+    min-height: 80px;
+    resize: vertical;
+}
+
 /*=====  End of Journal Section  ======*/ 
