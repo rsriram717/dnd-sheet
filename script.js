@@ -1014,33 +1014,35 @@ class CharacterSheet {
 
     // Gather all character data from form
     gatherCharacterData() {
+        const getIntValue = (id, fallback = 0) => parseInt(document.getElementById(id).value, 10) || fallback;
+
         const data = {
             // Basic info
             name: document.getElementById('character-name').value,
             class: document.getElementById('character-class').value,
             race: document.getElementById('character-race').value,
             background: document.getElementById('character-background').value,
-            level: document.getElementById('character-level').value,
+            level: getIntValue('character-level', 1),
             alignment: document.getElementById('character-alignment').value,
 
             // Ability scores
             abilities: {
-                strength: document.getElementById('strength').value,
-                dexterity: document.getElementById('dexterity').value,
-                constitution: document.getElementById('constitution').value,
-                intelligence: document.getElementById('intelligence').value,
-                wisdom: document.getElementById('wisdom').value,
-                charisma: document.getElementById('charisma').value
+                strength: getIntValue('strength', 10),
+                dexterity: getIntValue('dexterity', 10),
+                constitution: getIntValue('constitution', 10),
+                intelligence: getIntValue('intelligence', 10),
+                wisdom: getIntValue('wisdom', 10),
+                charisma: getIntValue('charisma', 10)
             },
 
             // Combat stats
-            armorClass: document.getElementById('armor-class').value,
-            speed: document.getElementById('speed').value,
+            armorClass: getIntValue('armor-class', 10),
+            speed: getIntValue('speed', 30),
 
             // Hit points
-            maxHp: document.getElementById('max-hp').value,
-            currentHp: document.getElementById('current-hp').value,
-            tempHp: document.getElementById('temp-hp').value,
+            maxHp: getIntValue('max-hp', 8),
+            currentHp: getIntValue('current-hp', 8),
+            tempHp: getIntValue('temp-hp', 0),
 
             // Skills
             skills: {},
