@@ -1,3 +1,5 @@
+import { init as initJournal, renderJournal } from './journal.js';
+
 // D&D 5e Character Sheet Application
 class CharacterSheet {
     constructor() {
@@ -7,8 +9,31 @@ class CharacterSheet {
         this.spells = [];
         this.cantrips = [];
         this.currentSpellTab = 1;
+        this.notesEntries = [];
+        this.currentJournalFilter = 'all';
+        this.autoSaveTimeout = null;
         this.initializeEventListeners();
+        this.initializeJournal();
         this.loadLastCharacter();
+    }
+
+    initializeJournal() {
+        const journalOptions = {
+            container: document.querySelector('.journal-notes-container'),
+            addButton: document.querySelector('.journal-add-btn'),
+            input: document.querySelector('.journal-input'),
+            filterContainer: document.querySelector('.journal-filters'),
+            onNoteChange: this.handleNoteChange.bind(this),
+            getNotes: () => this.notesEntries,
+            getFilter: () => this.currentJournalFilter,
+            setFilter: (filter) => { this.currentJournalFilter = filter; },
+        };
+        initJournal(journalOptions);
+    }
+
+    handleNoteChange(updatedNotes) {
+        this.notesEntries = updatedNotes;
+        this.autoSave();
     }
 
     initializeEventListeners() {
@@ -115,7 +140,7 @@ class CharacterSheet {
             }
         });
 
-        // Auto-save on any input change
+        // Auto-save on any input change (now debounced)
         document.addEventListener('input', () => {
             if (this.currentCharacter) {
                 this.autoSave();
@@ -922,106 +947,69 @@ class CharacterSheet {
                 bonusElement.textContent = skillBonus >= 0 ? `+${skillBonus}` : `${skillBonus}`;
             }
         });
+
+        this.autoSave();
     }
 
     // Create new character
     newCharacter() {
-        if (confirm('Are you sure you want to create a new character? Any unsaved changes will be lost.')) {
-            this.resetForm();
-            this.currentCharacter = null;
-            this.spells = [];
-            this.cantrips = [];
-            this.spellSlots = {};
-            this.usedSpellSlots = {};
-            this.currentSpellTab = 1;
-            this.updateModifiers();
-            this.updateLevelDependentStats();
-            this.updateSpellcasting();
-        }
+        this.currentCharacter = `character_${Date.now()}`;
+        this.resetForm();
+        this.saveCharacter();
+        alert('New character created. Fill in the details and your progress will be auto-saved.');
     }
 
     // Reset form to default values
     resetForm() {
-        // Reset basic info
-        document.getElementById('character-name').value = '';
-        document.getElementById('character-class').value = '';
-        document.getElementById('character-race').value = '';
-        document.getElementById('character-background').value = '';
-        document.getElementById('character-level').value = '1';
-        document.getElementById('character-alignment').value = '';
-
-        // Reset ability scores
-        const abilities = ['strength', 'dexterity', 'constitution', 'intelligence', 'wisdom', 'charisma'];
-        abilities.forEach(ability => {
-            document.getElementById(ability).value = '10';
-        });
-
-        // Reset combat stats
-        document.getElementById('armor-class').value = '10';
-        document.getElementById('speed').value = '30';
-
-        // Reset hit points
-        document.getElementById('max-hp').value = '8';
-        document.getElementById('current-hp').value = '8';
-        document.getElementById('temp-hp').value = '0';
-
-        // Reset skill proficiencies
-        const skills = [
-            'acrobatics', 'animal-handling', 'arcana', 'athletics', 'deception',
-            'history', 'insight', 'intimidation', 'investigation', 'medicine',
-            'nature', 'perception', 'performance', 'persuasion', 'religion',
-            'sleight-of-hand', 'stealth', 'survival'
-        ];
-        
-        skills.forEach(skill => {
-            const checkbox = document.getElementById(`${skill}-prof`);
-            if (checkbox) {
-                checkbox.checked = false;
-            }
-        });
-
-        // Reset text areas
-        document.getElementById('equipment').value = '';
-        document.getElementById('notes').value = '';
+        document.getElementById('character-sheet-form').reset();
+        this.spells = [];
+        this.cantrips = [];
+        this.notesEntries = [];
+        this.currentJournalFilter = 'all';
+        this.updateModifiers();
+        this.updateLevelDependentStats();
+        this.updateClassDependentStats();
+        this.updateSpellcasting();
+        this.renderAllSpells();
+        renderJournal(document.querySelector('.journal-notes-container'), this.notesEntries, this.currentJournalFilter);
     }
 
     // Save character to localStorage
     saveCharacter() {
-        const characterName = document.getElementById('character-name').value.trim();
-        
-        if (!characterName) {
-            alert('Please enter a character name before saving.');
-            return;
+        if (!this.currentCharacter) {
+            // This case should ideally not be hit if newCharacter sets it, but as a fallback:
+            this.currentCharacter = `character_${Date.now()}`;
         }
+        const data = this.gatherCharacterData();
 
-        const characterData = this.gatherCharacterData();
-        const savedCharacters = JSON.parse(localStorage.getItem('dnd-characters') || '{}');
-        
-        savedCharacters[characterName] = {
-            ...characterData,
-            lastModified: new Date().toISOString()
-        };
-        
-        localStorage.setItem('dnd-characters', JSON.stringify(savedCharacters));
-        localStorage.setItem('dnd-last-character', characterName);
-        
-        this.currentCharacter = characterName;
-        alert(`Character "${characterName}" saved successfully!`);
-    }
-
-    // Auto-save current character
-    autoSave() {
-        if (this.currentCharacter) {
-            const characterData = this.gatherCharacterData();
+        try {
             const savedCharacters = JSON.parse(localStorage.getItem('dnd-characters') || '{}');
-            
             savedCharacters[this.currentCharacter] = {
-                ...characterData,
+                ...data,
                 lastModified: new Date().toISOString()
             };
-            
             localStorage.setItem('dnd-characters', JSON.stringify(savedCharacters));
+            localStorage.setItem('dnd-last-character', this.currentCharacter);
+
+            console.log(`Character ${this.currentCharacter} saved successfully.`);
+        } catch (error) {
+            console.error("Failed to save character to localStorage:", error);
+            const saveBtn = document.getElementById('save-character-btn');
+            saveBtn.style.backgroundColor = '#e53e3e'; // A shade of red
+            saveBtn.textContent = 'Save Failed';
+            setTimeout(() => {
+                saveBtn.style.backgroundColor = ''; // Revert to original style
+                saveBtn.textContent = 'Save Character';
+            }, 3000);
+            alert('Could not save character. Your browser storage might be full or disabled.');
         }
+    }
+
+    autoSave() {
+        clearTimeout(this.autoSaveTimeout);
+        this.autoSaveTimeout = setTimeout(() => {
+            this.saveCharacter();
+        }, 500);
     }
 
     // Gather all character data from form
@@ -1064,8 +1052,18 @@ class CharacterSheet {
 
             // Equipment and notes
             equipment: document.getElementById('equipment').value,
-            notes: document.getElementById('notes').value
+            notes: document.getElementById('notes').value,
+            notesEntries: this.notesEntries,
         };
+
+        // For backward compatibility, create a summary in the legacy notes field
+        if (this.notesEntries.length > 0) {
+            const summary = this.notesEntries
+                .slice(0, 5) // Take first 5 notes
+                .map(n => `[${n.type}] ${n.text.substring(0, 30)}...`)
+                .join('\\n');
+            data.notes = `Journal Summary (see new Notes & Journal section):\n${summary}`;
+        }
 
         // Gather skill proficiencies
         const skills = [
@@ -1130,11 +1128,39 @@ class CharacterSheet {
         document.getElementById('equipment').value = characterData.equipment || '';
         document.getElementById('notes').value = characterData.notes || '';
 
-        // Update calculated values
+        // Load notes with backward compatibility
+        this.notesEntries = [];
+        if (characterData.notesEntries && characterData.notesEntries.length > 0) {
+            this.notesEntries = characterData.notesEntries;
+            // If legacy notes also exist, import them as a new note to prevent data loss
+            if (characterData.notes) {
+                const legacyNote = {
+                    id: crypto.randomUUID(),
+                    timestamp: Date.now(),
+                    type: 'general',
+                    text: `Imported from legacy notes field:\n\n${characterData.notes}`,
+                    pinned: false,
+                };
+                this.notesEntries.unshift(legacyNote);
+            }
+        } else if (characterData.notes) {
+            // If only legacy notes exist, convert them to the new format
+            const legacyNote = {
+                id: crypto.randomUUID(),
+                timestamp: Date.now(),
+                type: 'general',
+                text: characterData.notes,
+                pinned: false,
+            };
+            this.notesEntries.push(legacyNote);
+        }
+
         this.updateModifiers();
         this.updateLevelDependentStats();
         this.updateSpellcasting();
         this.renderCantrips();
+        this.renderAllSpells();
+        renderJournal(document.querySelector('.journal-notes-container'), this.notesEntries, this.currentJournalFilter);
     }
 
     // Show load character modal
@@ -1273,41 +1299,32 @@ class CharacterSheet {
         const reader = new FileReader();
         reader.onload = (event) => {
             try {
-                const json = event.target.result;
-                const characterData = JSON.parse(json);
-                
-                // Validate the imported data has required fields
-                if (!characterData.name) {
-                    alert('Invalid character file: missing character name.');
-                    return;
-                }
-                
-                // Load the character data
+                const characterData = JSON.parse(event.target.result);
+                const characterName = `character_${Date.now()}`;
+                this.currentCharacter = characterName;
                 this.loadCharacterData(characterData);
-                this.currentCharacter = null; // Clear current character to prevent auto-save conflicts
-                
-                alert(`Character "${characterData.name}" imported successfully!\nRemember to save if you want to store it locally.`);
-                
+                this.saveCharacter(); 
+                alert(`Character "${characterData.characterName || 'Unknown'}" imported successfully!`);
             } catch (error) {
-                alert('Error reading character file. Please make sure it\'s a valid character export.');
-                console.error('Import error:', error);
+                console.error('Error parsing imported file:', error);
+                alert('Failed to import character. The file may be corrupted or in the wrong format.');
             }
         };
-        
-        reader.onerror = () => {
-            alert('Error reading file. Please try again.');
-        };
-        
         reader.readAsText(file);
-        
-        // Clear the file input so the same file can be imported again if needed
-        e.target.value = '';
     }
 
     // Show save info modal
     showSaveInfoModal() {
         const saveInfoModal = document.getElementById('save-info-modal');
         saveInfoModal.style.display = 'block';
+    }
+
+    // Render all spells
+    renderAllSpells() {
+        this.renderCantrips();
+        this.renderSpellSlots();
+        this.renderSpellTabs();
+        this.renderSpellLists();
     }
 }
 

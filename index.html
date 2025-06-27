@@ -248,8 +248,8 @@
                     </div>
                     
                     <!-- Spell Lists by Level -->
-                    <div id="spell-lists-container">
-                        <!-- Spell lists will be generated dynamically -->
+                    <div id="spell-lists-by-level">
+                        <!-- Spells will be generated here -->
                     </div>
                 </div>
             </section>
@@ -522,12 +522,35 @@
                         <textarea id="equipment" placeholder="List your equipment, weapons, and armor here..."></textarea>
                     </div>
                     <div class="notes-section">
-                        <h3>Notes & Features</h3>
-                        <textarea id="notes" placeholder="Character features, traits, spells, and campaign notes..."></textarea>
+                        <h3>Notes</h3>
+                        <textarea id="notes" placeholder="Legacy notes field for backward compatibility. Please use the new Journal section."></textarea>
                     </div>
                 </div>
             </section>
         </main>
+
+        <!-- Notes & Journal Section -->
+        <section class="journal-section-wrapper">
+            <div class="journal-section">
+                <h3>Notes & Journal</h3>
+                <div class="journal-controls">
+                    <div class="journal-filters">
+                        <button class="journal-filter-btn active" data-filter="all">All</button>
+                        <button class="journal-filter-btn" data-filter="general">General</button>
+                        <button class="journal-filter-btn" data-filter="inventory">Inventory</button>
+                        <button class="journal-filter-btn" data-filter="npc">NPCs</button>
+                        <button class="journal-filter-btn" data-filter="lore">Lore/World</button>
+                    </div>
+                    <div class="journal-entry-box">
+                        <textarea class="journal-input" placeholder="Type your note here... (Ctrl+Enter to save)"></textarea>
+                        <button class="journal-add-btn btn btn-small">Add Note</button>
+                    </div>
+                </div>
+                <div class="journal-notes-container">
+                    <!-- Notes will be dynamically inserted here -->
+                </div>
+            </div>
+        </section>
     </div>
 
     <!-- Character Selection Modal -->
@@ -674,12 +697,12 @@
                 </div>
             </div>
 
-            <div class="modal-buttons">
+            <div id="close-save-info-modal" class="modal-buttons">
                 <button class="btn btn-primary" id="close-save-info">Got It!</button>
             </div>
         </div>
     </div>
 
-    <script src="script.js"></script>
+    <script type="module" src="script.js"></script>
 </body>
 </html> 
