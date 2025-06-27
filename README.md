@@ -27,6 +27,14 @@ A modern, web-based character sheet tracker for Dungeons & Dragons 5th Edition. 
 - **Mobile Friendly**: Responsive design that works on all devices
 - **Data Privacy**: All data stored locally in your browser - no cloud storage or data collection
 
+### Notes & Journal
+- **Categorized Notes**: Create, view, edit, and delete notes in `General`, `Inventory`, `NPCs`, or `Lore/World` categories.
+- **Filtering**: Filter notes by category or view all at once.
+- **Timestamping**: Each note is automatically timestamped upon creation.
+- **Pinning**: Pin important notes to the top of the list for quick access.
+- **Secure & Animated**: Notes are rendered securely to prevent XSS and have smooth animations for adding and deleting.
+- **Backward Compatibility**: Automatically imports notes from the legacy text field into the new system.
+
 ## How to Use
 
 ### Getting Started
@@ -147,6 +155,7 @@ A modern, web-based character sheet tracker for Dungeons & Dragons 5th Edition. 
 - `index.html` - Main application interface with spellcasting UI
 - `styles.css` - Modern, responsive styling with fantasy theme and spell-specific styles
 - `script.js` - All application logic including comprehensive spellcasting functionality
+- `journal.js` - Contains all logic for the Notes & Journal feature.
 - `README.md` - This documentation file
 
 ### Browser Compatibility
