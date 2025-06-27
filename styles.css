@@ -1419,8 +1419,9 @@ section {
 }
 
 /* Styles for when a note is being edited */
+.journal-note.editing .journal-note-header,
 .journal-note.editing .journal-note-content {
-    display: none; /* Hide the static text */
+    display: none; /* Hide the static text and header */
 }
 
 .journal-note-edit-area {

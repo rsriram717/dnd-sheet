@@ -42,12 +42,18 @@ function createNoteElement(note) {
     pinBtn.title = note.pinned ? 'Unpin Note' : 'Pin Note';
     pinBtn.textContent = '📌';
     
+    const editBtn = document.createElement('button');
+    editBtn.classList.add('edit-note-btn');
+    editBtn.title = 'Edit Note';
+    editBtn.textContent = '✏️';
+
     const deleteBtn = document.createElement('button');
     deleteBtn.classList.add('delete-note-btn');
     deleteBtn.title = 'Delete Note';
     deleteBtn.textContent = '🗑️';
 
     actions.appendChild(pinBtn);
+    actions.appendChild(editBtn);
     actions.appendChild(deleteBtn);
 
     header.appendChild(meta);
@@ -67,12 +73,23 @@ function createNoteElement(note) {
     const editTextarea = document.createElement('textarea');
     editTextarea.value = note.text;
     
+    const buttonGroup = document.createElement('div');
+    buttonGroup.style.display = 'flex';
+    buttonGroup.style.gap = '8px';
+
     const saveEditBtn = document.createElement('button');
     saveEditBtn.classList.add('btn', 'btn-small', 'save-note-btn');
     saveEditBtn.textContent = 'Save';
 
+    const cancelEditBtn = document.createElement('button');
+    cancelEditBtn.classList.add('btn', 'btn-small', 'btn-secondary', 'cancel-edit-btn');
+    cancelEditBtn.textContent = 'Cancel';
+
+    buttonGroup.appendChild(saveEditBtn);
+    buttonGroup.appendChild(cancelEditBtn);
+    
     editArea.appendChild(editTextarea);
-    editArea.appendChild(saveEditBtn);
+    editArea.appendChild(buttonGroup);
     noteEl.appendChild(editArea);
 
     return noteEl;
@@ -204,14 +221,15 @@ export function init(options) {
             return; // Exit early
         }
 
-        // Edit note - listen for clicks on the content area
-        if (e.target.classList.contains('journal-note-content')) {
+        // Edit note - listen for clicks on the new edit button
+        if (e.target.closest('.edit-note-btn')) {
             noteEl.classList.add('editing');
             noteEl.querySelector('textarea').focus();
+            return;
         }
 
         // Save edited note
-        if (e.target.classList.contains('save-note-btn')) {
+        if (e.target.closest('.save-note-btn')) {
             const newText = noteEl.querySelector('textarea').value.trim();
             if (newText) {
                 updatedNotes = notes.map(note => {
@@ -225,6 +243,15 @@ export function init(options) {
                 noteEl.querySelector('.journal-note-content').textContent = newText;
                 noteEl.classList.remove('editing');
             }
+            return;
+        }
+
+        // Cancel editing
+        if (e.target.closest('.cancel-edit-btn')) {
+            // Revert the textarea value to the original, in case of changes
+            noteEl.querySelector('textarea').value = noteEl.querySelector('.journal-note-content').textContent;
+            noteEl.classList.remove('editing');
+            return;
         }
     });
 
