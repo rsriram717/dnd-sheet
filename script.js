@@ -1085,29 +1085,35 @@ class CharacterSheet {
 
     // Load character data into form
     loadCharacterData(characterData) {
+        // A helper function to safely parse integers
+        const safeParseInt = (value, fallback) => {
+            const parsed = parseInt(value, 10);
+            return isNaN(parsed) ? fallback : parsed;
+        };
+
         // Load basic info
         document.getElementById('character-name').value = characterData.name || '';
         document.getElementById('character-class').value = characterData.class || '';
         document.getElementById('character-race').value = characterData.race || '';
         document.getElementById('character-background').value = characterData.background || '';
-        document.getElementById('character-level').value = characterData.level || '1';
+        document.getElementById('character-level').value = safeParseInt(characterData.level, 1);
         document.getElementById('character-alignment').value = characterData.alignment || '';
 
         // Load ability scores
         if (characterData.abilities) {
             Object.entries(characterData.abilities).forEach(([ability, value]) => {
-                document.getElementById(ability).value = value || '10';
+                document.getElementById(ability).value = safeParseInt(value, 10);
             });
         }
 
         // Load combat stats
-        document.getElementById('armor-class').value = characterData.armorClass || '10';
-        document.getElementById('speed').value = characterData.speed || '30';
+        document.getElementById('armor-class').value = safeParseInt(characterData.armorClass, 10);
+        document.getElementById('speed').value = safeParseInt(characterData.speed, 30);
 
         // Load hit points
-        document.getElementById('max-hp').value = characterData.maxHp || '8';
-        document.getElementById('current-hp').value = characterData.currentHp || '8';
-        document.getElementById('temp-hp').value = characterData.tempHp || '0';
+        document.getElementById('max-hp').value = safeParseInt(characterData.maxHp, 8);
+        document.getElementById('current-hp').value = safeParseInt(characterData.currentHp, 8);
+        document.getElementById('temp-hp').value = safeParseInt(characterData.tempHp, 0);
 
         // Load skill proficiencies
         if (characterData.skills) {
