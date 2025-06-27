@@ -587,7 +587,7 @@ class CharacterSheet {
 
     // Render spell lists
     renderSpellLists() {
-        const container = document.getElementById('spell-lists-container');
+        const container = document.getElementById('spell-lists-by-level');
         container.innerHTML = '';
 
         const spellsForLevel = this.spells.filter(spell => spell.level === this.currentSpellTab);
