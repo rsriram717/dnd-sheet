@@ -587,7 +587,7 @@ class CharacterSheet {
 
     // Render spell lists
     renderSpellLists() {
-        const container = document.getElementById('spell-lists-container');
+        const container = document.getElementById('spell-lists-by-level');
         container.innerHTML = '';
 
         const spellsForLevel = this.spells.filter(spell => spell.level === this.currentSpellTab);
@@ -1187,15 +1187,18 @@ class CharacterSheet {
                 
                 characterItem.innerHTML = `
                     <div class="character-info">
-                        <h4>${name}</h4>
+                        <h4>${data.name || name}</h4>
                         <p>Level ${data.level || 1} ${data.race || 'Unknown'} ${data.class || 'Unknown'}</p>
                         <p>Last modified: ${new Date(data.lastModified).toLocaleDateString()}</p>
                     </div>
-                    <button class="delete-character" onclick="characterSheet.deleteCharacter('${name}')">Delete</button>
+                    <button class="delete-character" data-character-name="${name}">Delete</button>
                 `;
                 
                 characterItem.addEventListener('click', (e) => {
-                    if (!e.target.classList.contains('delete-character')) {
+                    if (e.target.classList.contains('delete-character')) {
+                        const charNameToDelete = e.target.dataset.characterName;
+                        this.deleteCharacter(charNameToDelete);
+                    } else {
                         this.loadCharacter(name);
                         document.getElementById('character-modal').style.display = 'none';
                     }
@@ -1308,11 +1311,13 @@ class CharacterSheet {
         reader.onload = (event) => {
             try {
                 const characterData = JSON.parse(event.target.result);
-                const characterName = `character_${Date.now()}`;
+                // Use the character's name from the file as the primary key
+                const characterName = characterData.name || `character_${Date.now()}`;
+                
                 this.currentCharacter = characterName;
                 this.loadCharacterData(characterData);
                 this.saveCharacter(); 
-                alert(`Character "${characterData.characterName || 'Unknown'}" imported successfully!`);
+                alert(`Character "${characterName}" imported successfully!`);
             } catch (error) {
                 console.error('Error parsing imported file:', error);
                 alert('Failed to import character. The file may be corrupted or in the wrong format.');
