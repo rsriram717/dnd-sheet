@@ -23,7 +23,8 @@
 
         <!-- Top Level Navigation -->
         <nav class="main-navigation">
-            <button class="nav-tab active" data-screen="character">Character Sheet</button>
+            <button class="nav-tab active" data-screen="character">Character Stats</button>
+            <button class="nav-tab" data-screen="spells">Spellcasting</button>
             <button class="nav-tab" data-screen="dice">Dice Roller</button>
         </nav>
 
@@ -188,78 +189,6 @@
                 </div>
             </section>
 
-            <!-- Spellcasting Section -->
-            <section class="spellcasting" id="spellcasting-section" style="display: none;">
-                <h2>Spellcasting</h2>
-                
-                <!-- Spellcasting Info -->
-                <div class="spellcasting-info">
-                    <div class="spell-info-grid">
-                        <div class="spell-stat">
-                            <label for="spellcasting-ability">Spellcasting Ability</label>
-                            <div class="input-with-info">
-                                <input type="text" id="spellcasting-ability" readonly>
-                                <button class="info-btn" type="button" data-tooltip="Spellcasting Ability varies by class: Bard/Paladin/Sorcerer/Warlock use Charisma, Cleric/Druid/Ranger use Wisdom, Wizard uses Intelligence">ℹ️</button>
-                            </div>
-                        </div>
-                        <div class="spell-stat">
-                            <label for="spell-save-dc">Spell Save DC</label>
-                            <div class="input-with-info">
-                                <input type="number" id="spell-save-dc" readonly>
-                                <button class="info-btn" type="button" data-tooltip="Spell Save DC = 8 + Proficiency Bonus + Spellcasting Ability Modifier">ℹ️</button>
-                            </div>
-                        </div>
-                        <div class="spell-stat">
-                            <label for="spell-attack-bonus">Spell Attack Bonus</label>
-                            <div class="input-with-info">
-                                <input type="text" id="spell-attack-bonus" readonly>
-                                <button class="info-btn" type="button" data-tooltip="Spell Attack Bonus = Proficiency Bonus + Spellcasting Ability Modifier">ℹ️</button>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-
-                <!-- Cantrips -->
-                <div class="cantrips-section">
-                    <h3>Cantrips</h3>
-                    <div class="cantrips-controls">
-                        <button id="add-cantrip-btn" class="btn btn-small">Add Cantrip</button>
-                        <span class="cantrips-known">Known: <span id="cantrips-count">0</span>/<span id="cantrips-max">0</span></span>
-                    </div>
-                    <div id="cantrips-list" class="spells-list"></div>
-                </div>
-
-                <!-- Spell Slots -->
-                <div class="spell-slots-section">
-                    <h3>Spell Slots</h3>
-                    <div class="spell-slots-grid" id="spell-slots-grid">
-                        <!-- Spell slots will be generated dynamically -->
-                    </div>
-                    <div class="spell-slots-controls">
-                        <button id="short-rest-btn" class="btn btn-small">Short Rest</button>
-                        <button id="long-rest-btn" class="btn btn-small">Long Rest</button>
-                    </div>
-                </div>
-
-                <!-- Known/Prepared Spells -->
-                <div class="known-spells-section">
-                    <h3 id="spells-section-title">Known Spells</h3>
-                    <div class="spells-controls">
-                        <button id="add-spell-btn" class="btn btn-small">Add Spell</button>
-                        <span class="spells-known">Known: <span id="spells-count">0</span><span id="spells-limit-display">/<span id="spells-max">0</span></span></span>
-                    </div>
-                    
-                    <!-- Spell Level Tabs -->
-                    <div class="spell-level-tabs" id="spell-level-tabs">
-                        <!-- Tabs will be generated dynamically -->
-                    </div>
-                    
-                    <!-- Spell Lists by Level -->
-                    <div id="spell-lists-by-level">
-                        <!-- Spells will be generated here -->
-                    </div>
-                </div>
-            </section>
 
             <!-- Skills -->
             <section class="skills">
@@ -526,30 +455,106 @@
                 <h3>Equipment</h3>
                 <textarea id="equipment" placeholder="List your equipment, weapons, and armor here..."></textarea>
             </section>
-        </main>
-
             <!-- Notes & Journal Section -->
-        <section class="journal-section-wrapper">
-            <div class="journal-section">
-                <h3>Notes & Journal</h3>
-                <div class="journal-controls">
-                    <div class="journal-filters">
-                        <button class="journal-filter-btn active" data-filter="all">All</button>
-                        <button class="journal-filter-btn" data-filter="general">General</button>
-                        <button class="journal-filter-btn" data-filter="inventory">Inventory</button>
-                        <button class="journal-filter-btn" data-filter="npc">NPCs</button>
-                        <button class="journal-filter-btn" data-filter="lore">Lore/World</button>
+            <section class="journal-section-wrapper">
+                <div class="journal-section">
+                    <h3>Notes & Journal</h3>
+                    <div class="journal-controls">
+                        <div class="journal-filters">
+                            <button class="journal-filter-btn active" data-filter="all">All</button>
+                            <button class="journal-filter-btn" data-filter="general">General</button>
+                            <button class="journal-filter-btn" data-filter="inventory">Inventory</button>
+                            <button class="journal-filter-btn" data-filter="npc">NPCs</button>
+                            <button class="journal-filter-btn" data-filter="lore">Lore/World</button>
+                        </div>
+                        <div class="journal-entry-box">
+                            <textarea class="journal-input" placeholder="Type your note here... (Ctrl+Enter to save)"></textarea>
+                            <button class="journal-add-btn btn btn-small">Add Note</button>
+                        </div>
                     </div>
-                    <div class="journal-entry-box">
-                        <textarea class="journal-input" placeholder="Type your note here... (Ctrl+Enter to save)"></textarea>
-                        <button class="journal-add-btn btn btn-small">Add Note</button>
+                    <div class="journal-notes-container">
+                        <!-- Notes will be dynamically inserted here -->
                     </div>
                 </div>
-                <div class="journal-notes-container">
-                    <!-- Notes will be dynamically inserted here -->
-                </div>
-            </div>
-        </section>
+            </section>
+        </main>
+        </div>
+
+        <!-- Spellcasting Screen -->
+        <div class="screen" id="spells-screen">
+            <main class="spells-main">
+                <section class="spellcasting">
+                    <h2>Spellcasting</h2>
+                    
+                    <!-- Spellcasting Info -->
+                    <div class="spellcasting-info">
+                        <div class="spell-info-grid">
+                            <div class="spell-stat">
+                                <label for="spellcasting-ability">Spellcasting Ability</label>
+                                <div class="input-with-info">
+                                    <input type="text" id="spellcasting-ability" readonly>
+                                    <button class="info-btn" type="button" data-tooltip="Spellcasting Ability varies by class: Bard/Paladin/Sorcerer/Warlock use Charisma, Cleric/Druid/Ranger use Wisdom, Wizard uses Intelligence">ℹ️</button>
+                                </div>
+                            </div>
+                            <div class="spell-stat">
+                                <label for="spell-save-dc">Spell Save DC</label>
+                                <div class="input-with-info">
+                                    <input type="number" id="spell-save-dc" readonly>
+                                    <button class="info-btn" type="button" data-tooltip="Spell Save DC = 8 + Proficiency Bonus + Spellcasting Ability Modifier">ℹ️</button>
+                                </div>
+                            </div>
+                            <div class="spell-stat">
+                                <label for="spell-attack-bonus">Spell Attack Bonus</label>
+                                <div class="input-with-info">
+                                    <input type="text" id="spell-attack-bonus" readonly>
+                                    <button class="info-btn" type="button" data-tooltip="Spell Attack Bonus = Proficiency Bonus + Spellcasting Ability Modifier">ℹ️</button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Cantrips -->
+                    <div class="cantrips-section">
+                        <h3>Cantrips</h3>
+                        <div class="cantrips-controls">
+                            <button id="add-cantrip-btn" class="btn btn-small">Add Cantrip</button>
+                            <span class="cantrips-known">Known: <span id="cantrips-count">0</span>/<span id="cantrips-max">0</span></span>
+                        </div>
+                        <div id="cantrips-list" class="spells-list"></div>
+                    </div>
+
+                    <!-- Spell Slots -->
+                    <div class="spell-slots-section">
+                        <h3>Spell Slots</h3>
+                        <div class="spell-slots-grid" id="spell-slots-grid">
+                            <!-- Spell slots will be generated dynamically -->
+                        </div>
+                        <div class="spell-slots-controls">
+                            <button id="short-rest-btn" class="btn btn-small">Short Rest</button>
+                            <button id="long-rest-btn" class="btn btn-small">Long Rest</button>
+                        </div>
+                    </div>
+
+                    <!-- Known/Prepared Spells -->
+                    <div class="known-spells-section">
+                        <h3 id="spells-section-title">Known Spells</h3>
+                        <div class="spells-controls">
+                            <button id="add-spell-btn" class="btn btn-small">Add Spell</button>
+                            <span class="spells-known">Known: <span id="spells-count">0</span><span id="spells-limit-display">/<span id="spells-max">0</span></span></span>
+                        </div>
+                        
+                        <!-- Spell Level Tabs -->
+                        <div class="spell-level-tabs" id="spell-level-tabs">
+                            <!-- Tabs will be generated dynamically -->
+                        </div>
+                        
+                        <!-- Spell Lists by Level -->
+                        <div id="spell-lists-by-level">
+                            <!-- Spells will be generated here -->
+                        </div>
+                    </div>
+                </section>
+            </main>
         </div>
 
         <!-- Dice Roller Screen -->

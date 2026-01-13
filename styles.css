@@ -840,6 +840,10 @@ input[readonly] {
     width: 100%;
 }
 
+.spells-main {
+    width: 100%;
+}
+
 /* Dice Rolling Styles */
 .dice-section {
     background: rgba(0, 0, 0, 0.3);

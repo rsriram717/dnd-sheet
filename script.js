@@ -1550,7 +1550,10 @@ class CharacterSheet {
         document.querySelectorAll('.screen').forEach(screen => {
             screen.classList.remove('active');
         });
-        document.getElementById(`${screenName}-screen`).classList.add('active');
+        
+        // Handle screen name mapping for spells
+        const screenId = screenName === 'spells' ? 'spells-screen' : `${screenName}-screen`;
+        document.getElementById(screenId).classList.add('active');
         
         // Save current screen preference
         localStorage.setItem('currentScreen', screenName);
