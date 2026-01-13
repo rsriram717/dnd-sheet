@@ -360,10 +360,13 @@ class CharacterSheet {
     updateSpellcasting() {
         const characterClass = document.getElementById('character-class').value;
         const spellcastingClasses = ['bard', 'cleric', 'druid', 'paladin', 'ranger', 'sorcerer', 'warlock', 'wizard'];
-        const spellcastingSection = document.getElementById('spellcasting-section');
+        const spellsTab = document.querySelector('[data-screen="spells"]');
         
         if (spellcastingClasses.includes(characterClass)) {
-            spellcastingSection.style.display = 'block';
+            // Show spells tab for spellcasting classes
+            if (spellsTab) {
+                spellsTab.style.display = 'block';
+            }
             this.updateSpellcastingStats();
             this.updateSpellSlots();
             this.updateCantripsKnown();
@@ -371,7 +374,10 @@ class CharacterSheet {
             this.renderSpellSlots();
             this.renderSpellTabs();
         } else {
-            spellcastingSection.style.display = 'none';
+            // Hide spells tab for non-spellcasting classes
+            if (spellsTab) {
+                spellsTab.style.display = 'none';
+            }
         }
     }
 
