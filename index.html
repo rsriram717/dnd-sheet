@@ -21,7 +21,15 @@
             </div>
         </header>
 
-        <main class="character-sheet">
+        <!-- Top Level Navigation -->
+        <nav class="main-navigation">
+            <button class="nav-tab active" data-screen="character">Character Sheet</button>
+            <button class="nav-tab" data-screen="dice">Dice Roller</button>
+        </nav>
+
+        <!-- Character Sheet Screen -->
+        <div class="screen active" id="character-screen">
+            <main class="character-sheet">
             <!-- Character Basic Info -->
             <section class="character-basics">
                 <div class="basic-info-grid">
@@ -520,7 +528,7 @@
             </section>
         </main>
 
-        <!-- Notes & Journal Section -->
+            <!-- Notes & Journal Section -->
         <section class="journal-section-wrapper">
             <div class="journal-section">
                 <h3>Notes & Journal</h3>
@@ -542,6 +550,110 @@
                 </div>
             </div>
         </section>
+        </div>
+
+        <!-- Dice Roller Screen -->
+        <div class="screen" id="dice-screen">
+            <main class="dice-main">
+                <section class="dice-section">
+                    <h2>Dice Roller</h2>
+                    <div class="dice-container">
+                        <!-- Main Dice Grid -->
+                        <div class="dice-grid">
+                            <div class="dice-button" data-sides="4">
+                                <div class="dice-face">
+                                    <span class="dice-type">d4</span>
+                                    <span class="dice-result" id="d4-result">-</span>
+                                </div>
+                            </div>
+                            <div class="dice-button" data-sides="6">
+                                <div class="dice-face">
+                                    <span class="dice-type">d6</span>
+                                    <span class="dice-result" id="d6-result">-</span>
+                                </div>
+                            </div>
+                            <div class="dice-button" data-sides="8">
+                                <div class="dice-face">
+                                    <span class="dice-type">d8</span>
+                                    <span class="dice-result" id="d8-result">-</span>
+                                </div>
+                            </div>
+                            <div class="dice-button" data-sides="10">
+                                <div class="dice-face">
+                                    <span class="dice-type">d10</span>
+                                    <span class="dice-result" id="d10-result">-</span>
+                                </div>
+                            </div>
+                            <div class="dice-button" data-sides="12">
+                                <div class="dice-face">
+                                    <span class="dice-type">d12</span>
+                                    <span class="dice-result" id="d12-result">-</span>
+                                </div>
+                            </div>
+                            <div class="dice-button" data-sides="20">
+                                <div class="dice-face">
+                                    <span class="dice-type">d20</span>
+                                    <span class="dice-result" id="d20-result">-</span>
+                                </div>
+                            </div>
+                            <div class="dice-button" data-sides="100">
+                                <div class="dice-face">
+                                    <span class="dice-type">d100</span>
+                                    <span class="dice-result" id="d100-result">-</span>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Roll Controls -->
+                        <div class="roll-controls">
+                            <div class="control-group">
+                                <label for="dice-quantity">Quantity:</label>
+                                <input type="number" id="dice-quantity" min="1" max="10" value="1">
+                            </div>
+                            <div class="control-group">
+                                <label for="dice-modifier">Modifier:</label>
+                                <input type="number" id="dice-modifier" value="0" placeholder="+/-">
+                            </div>
+                            <div class="control-group">
+                                <label>d20 Options:</label>
+                                <div class="advantage-controls">
+                                    <button id="advantage-btn" class="btn btn-small">Advantage</button>
+                                    <button id="disadvantage-btn" class="btn btn-small">Disadvantage</button>
+                                    <button id="normal-btn" class="btn btn-small active">Normal</button>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Custom Roll Input -->
+                        <div class="custom-roll">
+                            <label for="custom-roll-input">Custom Roll:</label>
+                            <input type="text" id="custom-roll-input" placeholder="e.g., 3d6+2, 2d10+5">
+                            <button id="custom-roll-btn" class="btn btn-primary">Roll</button>
+                        </div>
+
+                        <!-- Roll Result Display -->
+                        <div class="roll-result-display">
+                            <div class="result-main">
+                                <span class="result-label">Result:</span>
+                                <span class="result-value" id="main-result">-</span>
+                            </div>
+                            <div class="result-breakdown" id="result-breakdown"></div>
+                        </div>
+
+                        <!-- Roll History -->
+                        <div class="roll-history">
+                            <div class="history-header">
+                                <h4>Roll History</h4>
+                                <button id="clear-history-btn" class="btn btn-small">Clear</button>
+                            </div>
+                            <div class="history-list" id="roll-history-list">
+                                <!-- Roll history items will be added here -->
+                            </div>
+                        </div>
+                    </div>
+                </section>
+            </main>
+        </div>
     </div>
 
     <!-- Character Selection Modal -->

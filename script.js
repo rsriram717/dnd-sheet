@@ -14,7 +14,10 @@ class CharacterSheet {
         this.autoSaveTimeout = null;
         this.initializeEventListeners();
         this.initializeJournal();
+        this.initializeDiceRoller();
+        this.initializeNavigation();
         this.loadLastCharacter();
+        this.loadLastScreen();
     }
 
     initializeJournal() {
@@ -1300,6 +1303,264 @@ class CharacterSheet {
         this.renderSpellSlots();
         this.renderSpellTabs();
         this.renderSpellLists();
+    }
+
+    // Dice Rolling System
+    initializeDiceRoller() {
+        this.rollHistory = JSON.parse(localStorage.getItem('diceRollHistory')) || [];
+        this.advantageMode = 'normal'; // normal, advantage, disadvantage
+        
+        // Dice button event listeners
+        document.querySelectorAll('.dice-button').forEach(button => {
+            button.addEventListener('click', (e) => this.rollDice(e));
+        });
+        
+        // Control event listeners
+        document.getElementById('advantage-btn').addEventListener('click', () => this.setAdvantageMode('advantage'));
+        document.getElementById('disadvantage-btn').addEventListener('click', () => this.setAdvantageMode('disadvantage'));
+        document.getElementById('normal-btn').addEventListener('click', () => this.setAdvantageMode('normal'));
+        
+        // Custom roll
+        document.getElementById('custom-roll-btn').addEventListener('click', () => this.rollCustom());
+        document.getElementById('custom-roll-input').addEventListener('keypress', (e) => {
+            if (e.key === 'Enter') this.rollCustom();
+        });
+        
+        // Clear history
+        document.getElementById('clear-history-btn').addEventListener('click', () => this.clearRollHistory());
+        
+        this.renderRollHistory();
+    }
+    
+    setAdvantageMode(mode) {
+        this.advantageMode = mode;
+        document.querySelectorAll('.advantage-controls .btn').forEach(btn => btn.classList.remove('active'));
+        document.getElementById(`${mode}-btn`).classList.add('active');
+    }
+    
+    rollDice(event) {
+        const button = event.currentTarget;
+        const sides = parseInt(button.dataset.sides);
+        const quantity = parseInt(document.getElementById('dice-quantity').value) || 1;
+        const modifier = parseInt(document.getElementById('dice-modifier').value) || 0;
+        
+        // Add rolling animation
+        button.classList.add('rolling');
+        setTimeout(() => button.classList.remove('rolling'), 600);
+        
+        let rolls = [];
+        let total = 0;
+        
+        if (sides === 20 && this.advantageMode !== 'normal') {
+            // Handle advantage/disadvantage for d20
+            const roll1 = Math.floor(Math.random() * 20) + 1;
+            const roll2 = Math.floor(Math.random() * 20) + 1;
+            
+            if (this.advantageMode === 'advantage') {
+                rolls = [Math.max(roll1, roll2)];
+                total = rolls[0] + modifier;
+            } else {
+                rolls = [Math.min(roll1, roll2)];
+                total = rolls[0] + modifier;
+            }
+            
+            this.displayRollResult(button, rolls[0], `${this.advantageMode} (${roll1}, ${roll2})`);
+        } else {
+            // Normal rolling
+            for (let i = 0; i < quantity; i++) {
+                const roll = Math.floor(Math.random() * sides) + 1;
+                rolls.push(roll);
+                total += roll;
+            }
+            total += modifier;
+            
+            this.displayRollResult(button, rolls.length === 1 ? rolls[0] : total);
+        }
+        
+        // Add to history
+        const rollExpression = quantity > 1 ? `${quantity}d${sides}` : `d${sides}`;
+        const modifierText = modifier !== 0 ? (modifier > 0 ? `+${modifier}` : `${modifier}`) : '';
+        const advantageText = sides === 20 && this.advantageMode !== 'normal' ? ` (${this.advantageMode})` : '';
+        
+        this.addToRollHistory(`${rollExpression}${modifierText}${advantageText}`, total, rolls);
+        
+        // Update main result display
+        this.updateMainResult(total, rolls, modifier, sides === 20);
+    }
+    
+    displayRollResult(button, result, note = '') {
+        const resultElement = button.querySelector('.dice-result');
+        resultElement.textContent = result;
+        
+        // Add special styling for d20 crits/fumbles
+        resultElement.classList.remove('critical', 'fumble');
+        if (button.dataset.sides === '20') {
+            if (result === 20) resultElement.classList.add('critical');
+            if (result === 1) resultElement.classList.add('fumble');
+        }
+    }
+    
+    updateMainResult(total, rolls, modifier, isD20) {
+        const resultElement = document.getElementById('main-result');
+        const breakdownElement = document.getElementById('result-breakdown');
+        
+        resultElement.textContent = total;
+        resultElement.classList.remove('critical', 'fumble');
+        
+        // Special styling for d20 results
+        if (isD20 && rolls.length === 1) {
+            if (rolls[0] === 20) resultElement.classList.add('critical');
+            if (rolls[0] === 1) resultElement.classList.add('fumble');
+        }
+        
+        // Show breakdown for multiple dice or modifiers
+        if (rolls.length > 1 || modifier !== 0) {
+            let breakdown = `[${rolls.join(', ')}]`;
+            if (modifier !== 0) {
+                breakdown += modifier > 0 ? ` + ${modifier}` : ` - ${Math.abs(modifier)}`;
+            }
+            breakdownElement.textContent = breakdown;
+        } else {
+            breakdownElement.textContent = '';
+        }
+    }
+    
+    rollCustom() {
+        const input = document.getElementById('custom-roll-input');
+        const expression = input.value.trim();
+        
+        if (!expression) return;
+        
+        try {
+            const result = this.parseAndRollExpression(expression);
+            this.addToRollHistory(expression, result.total, result.rolls);
+            this.updateMainResult(result.total, result.rolls, 0, false);
+            input.value = '';
+        } catch (error) {
+            alert('Invalid dice expression. Use format like: 3d6+2, 2d10-1, d20+5');
+        }
+    }
+    
+    parseAndRollExpression(expression) {
+        // Simple parser for dice expressions like "3d6+2", "2d10-1", "d20+5"
+        const regex = /(\d*)d(\d+)([+-]\d+)?/g;
+        let match;
+        let total = 0;
+        let allRolls = [];
+        
+        while ((match = regex.exec(expression)) !== null) {
+            const quantity = parseInt(match[1]) || 1;
+            const sides = parseInt(match[2]);
+            const modifier = parseInt(match[3]) || 0;
+            
+            let rolls = [];
+            for (let i = 0; i < quantity; i++) {
+                const roll = Math.floor(Math.random() * sides) + 1;
+                rolls.push(roll);
+                total += roll;
+            }
+            total += modifier;
+            allRolls = allRolls.concat(rolls);
+        }
+        
+        if (allRolls.length === 0) {
+            throw new Error('Invalid expression');
+        }
+        
+        return { total, rolls: allRolls };
+    }
+    
+    addToRollHistory(expression, result, rolls) {
+        const timestamp = new Date().toLocaleTimeString();
+        const historyItem = {
+            expression,
+            result,
+            rolls,
+            timestamp,
+            id: Date.now()
+        };
+        
+        this.rollHistory.unshift(historyItem);
+        
+        // Keep only last 20 rolls
+        if (this.rollHistory.length > 20) {
+            this.rollHistory = this.rollHistory.slice(0, 20);
+        }
+        
+        localStorage.setItem('diceRollHistory', JSON.stringify(this.rollHistory));
+        this.renderRollHistory();
+    }
+    
+    renderRollHistory() {
+        const historyList = document.getElementById('roll-history-list');
+        
+        if (this.rollHistory.length === 0) {
+            historyList.innerHTML = '<div class="history-item"><span class="history-roll">No rolls yet</span></div>';
+            return;
+        }
+        
+        historyList.innerHTML = this.rollHistory.map(item => `
+            <div class="history-item">
+                <span class="history-roll">${item.expression}</span>
+                <span class="history-result">${item.result}</span>
+                <span class="history-time">${item.timestamp}</span>
+            </div>
+        `).join('');
+    }
+    
+    clearRollHistory() {
+        this.rollHistory = [];
+        localStorage.removeItem('diceRollHistory');
+        this.renderRollHistory();
+        
+        // Clear main result display
+        document.getElementById('main-result').textContent = '-';
+        document.getElementById('result-breakdown').textContent = '';
+        
+        // Clear individual dice results
+        document.querySelectorAll('.dice-result').forEach(result => {
+            result.textContent = '-';
+            result.classList.remove('critical', 'fumble');
+        });
+    }
+
+    // Navigation System
+    initializeNavigation() {
+        this.currentScreen = 'character';
+        
+        // Navigation tab event listeners
+        document.querySelectorAll('.nav-tab').forEach(tab => {
+            tab.addEventListener('click', (e) => this.switchScreen(e.target.dataset.screen));
+        });
+    }
+    
+    switchScreen(screenName) {
+        // Update current screen
+        this.currentScreen = screenName;
+        
+        // Update navigation tabs
+        document.querySelectorAll('.nav-tab').forEach(tab => {
+            tab.classList.remove('active');
+            if (tab.dataset.screen === screenName) {
+                tab.classList.add('active');
+            }
+        });
+        
+        // Update screen visibility
+        document.querySelectorAll('.screen').forEach(screen => {
+            screen.classList.remove('active');
+        });
+        document.getElementById(`${screenName}-screen`).classList.add('active');
+        
+        // Save current screen preference
+        localStorage.setItem('currentScreen', screenName);
+    }
+    
+    loadLastScreen() {
+        const savedScreen = localStorage.getItem('currentScreen');
+        if (savedScreen && savedScreen !== 'character') {
+            this.switchScreen(savedScreen);
+        }
     }
 }
 
