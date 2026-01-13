@@ -16,9 +16,8 @@
                 <button id="save-character-btn" class="btn btn-secondary">Save Character</button>
                 <button id="load-character-btn" class="btn btn-secondary">Load Character</button>
                 <button id="export-character-btn" class="btn btn-secondary">Export Character</button>
-                <button id="import-character-btn" class="btn btn-secondary">Import Character</button>
+                <input type="file" id="import-file" accept=".json" class="btn btn-secondary" style="display: inline-block; padding: 8px 16px; cursor: pointer;">
                 <button id="save-info-btn" class="btn btn-info" title="Save/Load Help">ℹ️</button>
-                <input type="file" id="import-file-input" accept=".json" style="display: none;">
             </div>
         </header>
 
@@ -514,18 +513,10 @@
                 </div>
             </section>
 
-            <!-- Equipment & Notes -->
-            <section class="equipment-notes">
-                <div class="equipment-notes-grid">
-                    <div class="equipment-section">
-                        <h3>Equipment</h3>
-                        <textarea id="equipment" placeholder="List your equipment, weapons, and armor here..."></textarea>
-                    </div>
-                    <div class="notes-section">
-                        <h3>Notes</h3>
-                        <textarea id="notes" placeholder="Legacy notes field for backward compatibility. Please use the new Journal section."></textarea>
-                    </div>
-                </div>
+            <!-- Equipment -->
+            <section class="equipment-section">
+                <h3>Equipment</h3>
+                <textarea id="equipment" placeholder="List your equipment, weapons, and armor here..."></textarea>
             </section>
         </main>
 

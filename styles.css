@@ -681,22 +681,11 @@ input[readonly] {
 }
 
 /* Equipment and Notes */
-.equipment-notes-grid {
-    display: grid;
-    grid-template-columns: 1fr 1fr;
-    gap: 30px;
-}
-
-.equipment-section, .notes-section {
-    display: flex;
-    flex-direction: column;
-    gap: 15px;
-}
-
-textarea {
+.equipment-section textarea {
     min-height: 200px;
     resize: vertical;
     font-family: inherit;
+    width: 100%;
 }
 
 /* Modal Styles */
@@ -851,10 +840,6 @@ textarea {
 
     .legend-item {
         justify-content: center;
-    }
-
-    .equipment-notes-grid {
-        grid-template-columns: 1fr;
     }
 
     .spell-info-grid {
@@ -1317,6 +1302,12 @@ section {
 
 .journal-add-btn {
     align-self: flex-end;
+}
+
+.equipment-section {
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
 }
 
 .journal-notes-container {

@@ -33,7 +33,6 @@ A modern, web-based character sheet tracker for Dungeons & Dragons 5th Edition. 
 - **Timestamping**: Each note is automatically timestamped upon creation.
 - **Pinning**: Pin important notes to the top of the list for quick access.
 - **Secure & Animated**: Notes are rendered securely to prevent XSS and have smooth animations for adding and deleting.
-- **Backward Compatibility**: Automatically imports notes from the legacy text field into the new system.
 
 ## How to Use
 

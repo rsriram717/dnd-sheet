@@ -42,8 +42,10 @@ class CharacterSheet {
         document.getElementById('save-character-btn').addEventListener('click', () => this.saveCharacter());
         document.getElementById('load-character-btn').addEventListener('click', () => this.showLoadModal());
         document.getElementById('export-character-btn').addEventListener('click', () => this.exportCharacter());
-        document.getElementById('import-character-btn').addEventListener('click', () => this.importCharacter());
-        document.getElementById('import-file-input').addEventListener('change', (e) => this.handleImportFile(e));
+        
+        // Import file input
+        document.getElementById('import-file').addEventListener('change', (e) => this.handleFileImport(e));
+
         document.getElementById('save-info-btn').addEventListener('click', () => this.showSaveInfoModal());
 
         // Ability score change events
@@ -1054,18 +1056,8 @@ class CharacterSheet {
 
             // Equipment and notes
             equipment: document.getElementById('equipment').value,
-            notes: document.getElementById('notes').value,
             notesEntries: this.notesEntries,
         };
-
-        // For backward compatibility, create a summary in the legacy notes field
-        if (this.notesEntries.length > 0) {
-            const summary = this.notesEntries
-                .slice(0, 5) // Take first 5 notes
-                .map(n => `[${n.type}] ${n.text.substring(0, 30)}...`)
-                .join('\\n');
-            data.notes = `Journal Summary (see new Notes & Journal section):\n${summary}`;
-        }
 
         // Gather skill proficiencies
         const skills = [
@@ -1134,34 +1126,9 @@ class CharacterSheet {
 
         // Load equipment and notes
         document.getElementById('equipment').value = characterData.equipment || '';
-        document.getElementById('notes').value = characterData.notes || '';
 
-        // Load notes with backward compatibility
-        this.notesEntries = [];
-        if (characterData.notesEntries && characterData.notesEntries.length > 0) {
-            this.notesEntries = characterData.notesEntries;
-            // If legacy notes also exist, import them as a new note to prevent data loss
-            if (characterData.notes) {
-                const legacyNote = {
-                    id: crypto.randomUUID(),
-                    timestamp: Date.now(),
-                    type: 'general',
-                    text: `Imported from legacy notes field:\n\n${characterData.notes}`,
-                    pinned: false,
-                };
-                this.notesEntries.unshift(legacyNote);
-            }
-        } else if (characterData.notes) {
-            // If only legacy notes exist, convert them to the new format
-            const legacyNote = {
-                id: crypto.randomUUID(),
-                timestamp: Date.now(),
-                type: 'general',
-                text: characterData.notes,
-                pinned: false,
-            };
-            this.notesEntries.push(legacyNote);
-        }
+        // Load notes entries
+        this.notesEntries = characterData.notesEntries || [];
 
         this.updateModifiers();
         this.updateLevelDependentStats();
@@ -1291,14 +1258,8 @@ class CharacterSheet {
         alert(`Character "${characterData.name}" exported successfully!`);
     }
 
-    // Import character data
-    importCharacter() {
-        const fileInput = document.getElementById('import-file-input');
-        fileInput.click();
-    }
-
-    // Handle imported file
-    handleImportFile(e) {
+    // Handle file import
+    handleFileImport(e) {
         const file = e.target.files[0];
         if (!file) return;
         
@@ -1311,19 +1272,20 @@ class CharacterSheet {
         reader.onload = (event) => {
             try {
                 const characterData = JSON.parse(event.target.result);
-                // Use the character's name from the file as the primary key
                 const characterName = characterData.name || `character_${Date.now()}`;
                 
                 this.currentCharacter = characterName;
                 this.loadCharacterData(characterData);
-                this.saveCharacter(); 
+                this.saveCharacter();
                 alert(`Character "${characterName}" imported successfully!`);
             } catch (error) {
-                console.error('Error parsing imported file:', error);
-                alert('Failed to import character. The file may be corrupted or in the wrong format.');
+                alert('Failed to import character. Invalid JSON file.');
             }
         };
         reader.readAsText(file);
+        
+        // Reset file input
+        e.target.value = '';
     }
 
     // Show save info modal
