@@ -16,7 +16,8 @@
                 <button id="save-character-btn" class="btn btn-secondary">Save Character</button>
                 <button id="load-character-btn" class="btn btn-secondary">Load Character</button>
                 <button id="export-character-btn" class="btn btn-secondary">Export Character</button>
-                <input type="file" id="import-file" accept=".json" class="btn btn-secondary" style="display: inline-block; padding: 8px 16px; cursor: pointer;">
+                <label for="import-file" class="btn btn-secondary" style="cursor: pointer;">Import Character</label>
+                <input type="file" id="import-file" accept=".json" style="display: none;">
                 <button id="save-info-btn" class="btn btn-info" title="Save/Load Help">ℹ️</button>
             </div>
         </header>
@@ -639,10 +640,122 @@
                         <!-- Roll Result Display -->
                         <div class="roll-result-display">
                             <div class="result-main">
-                                <span class="result-label">Result:</span>
+                                <span class="result-label">D20 Roll:</span>
                                 <span class="result-value" id="main-result">-</span>
                             </div>
                             <div class="result-breakdown" id="result-breakdown"></div>
+                        </div>
+
+                        <!-- Skill Results Display -->
+                        <div class="skill-results-display" id="skill-results-display" style="display: none;">
+                            <h4>What this roll would be for each skill:</h4>
+                            <div class="skill-results-grid">
+                                <!-- Strength Skills -->
+                                <div class="skill-group-result">
+                                    <h5>Strength</h5>
+                                    <div class="skill-result-item">
+                                        <span class="skill-name">Athletics</span>
+                                        <span class="skill-result" id="athletics-result">-</span>
+                                    </div>
+                                </div>
+
+                                <!-- Dexterity Skills -->
+                                <div class="skill-group-result">
+                                    <h5>Dexterity</h5>
+                                    <div class="skill-result-item">
+                                        <span class="skill-name">Acrobatics</span>
+                                        <span class="skill-result" id="acrobatics-result">-</span>
+                                    </div>
+                                    <div class="skill-result-item">
+                                        <span class="skill-name">Sleight of Hand</span>
+                                        <span class="skill-result" id="sleight-of-hand-result">-</span>
+                                    </div>
+                                    <div class="skill-result-item">
+                                        <span class="skill-name">Stealth</span>
+                                        <span class="skill-result" id="stealth-result">-</span>
+                                    </div>
+                                </div>
+
+                                <!-- Constitution Skills -->
+                                <div class="skill-group-result">
+                                    <h5>Constitution</h5>
+                                    <div class="skill-result-item">
+                                        <span class="skill-name">Constitution Save</span>
+                                        <span class="skill-result" id="constitution-save-result">-</span>
+                                    </div>
+                                </div>
+
+                                <!-- Intelligence Skills -->
+                                <div class="skill-group-result">
+                                    <h5>Intelligence</h5>
+                                    <div class="skill-result-item proficient">
+                                        <span class="skill-name">Arcana</span>
+                                        <span class="skill-result" id="arcana-result">-</span>
+                                    </div>
+                                    <div class="skill-result-item proficient">
+                                        <span class="skill-name">History</span>
+                                        <span class="skill-result" id="history-result">-</span>
+                                    </div>
+                                    <div class="skill-result-item">
+                                        <span class="skill-name">Investigation</span>
+                                        <span class="skill-result" id="investigation-result">-</span>
+                                    </div>
+                                    <div class="skill-result-item">
+                                        <span class="skill-name">Nature</span>
+                                        <span class="skill-result" id="nature-result">-</span>
+                                    </div>
+                                    <div class="skill-result-item proficient">
+                                        <span class="skill-name">Religion</span>
+                                        <span class="skill-result" id="religion-result">-</span>
+                                    </div>
+                                </div>
+
+                                <!-- Wisdom Skills -->
+                                <div class="skill-group-result">
+                                    <h5>Wisdom</h5>
+                                    <div class="skill-result-item">
+                                        <span class="skill-name">Animal Handling</span>
+                                        <span class="skill-result" id="animal-handling-result">-</span>
+                                    </div>
+                                    <div class="skill-result-item">
+                                        <span class="skill-name">Insight</span>
+                                        <span class="skill-result" id="insight-result">-</span>
+                                    </div>
+                                    <div class="skill-result-item">
+                                        <span class="skill-name">Medicine</span>
+                                        <span class="skill-result" id="medicine-result">-</span>
+                                    </div>
+                                    <div class="skill-result-item">
+                                        <span class="skill-name">Perception</span>
+                                        <span class="skill-result" id="perception-result">-</span>
+                                    </div>
+                                    <div class="skill-result-item">
+                                        <span class="skill-name">Survival</span>
+                                        <span class="skill-result" id="survival-result">-</span>
+                                    </div>
+                                </div>
+
+                                <!-- Charisma Skills -->
+                                <div class="skill-group-result">
+                                    <h5>Charisma</h5>
+                                    <div class="skill-result-item">
+                                        <span class="skill-name">Deception</span>
+                                        <span class="skill-result" id="deception-result">-</span>
+                                    </div>
+                                    <div class="skill-result-item">
+                                        <span class="skill-name">Intimidation</span>
+                                        <span class="skill-result" id="intimidation-result">-</span>
+                                    </div>
+                                    <div class="skill-result-item">
+                                        <span class="skill-name">Performance</span>
+                                        <span class="skill-result" id="performance-result">-</span>
+                                    </div>
+                                    <div class="skill-result-item proficient">
+                                        <span class="skill-name">Persuasion</span>
+                                        <span class="skill-result" id="persuasion-result">-</span>
+                                    </div>
+                                </div>
+                            </div>
                         </div>
 
                         <!-- Roll History -->

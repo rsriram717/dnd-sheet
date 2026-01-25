@@ -844,6 +844,123 @@ input[readonly] {
     width: 100%;
 }
 
+/* Skill Results Display */
+.skill-results-display {
+    background: rgba(0, 0, 0, 0.2);
+    border: 2px solid #d4af37;
+    border-radius: 12px;
+    padding: 20px;
+    margin-top: 20px;
+    backdrop-filter: blur(8px);
+}
+
+.skill-results-display h4 {
+    color: #d4af37;
+    text-align: center;
+    margin-bottom: 20px;
+    font-family: 'Cinzel', serif;
+    font-size: 1.1em;
+}
+
+.skill-results-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 15px;
+    max-width: 800px;
+    margin: 0 auto;
+}
+
+.skill-group-result {
+    background: rgba(212, 175, 55, 0.08);
+    border: 1px solid rgba(212, 175, 55, 0.3);
+    border-radius: 8px;
+    padding: 12px;
+}
+
+.skill-group-result h5 {
+    color: #d4af37;
+    font-family: 'Cinzel', serif;
+    font-size: 0.9em;
+    margin: 0 0 10px 0;
+    text-align: center;
+    border-bottom: 1px solid rgba(212, 175, 55, 0.3);
+    padding-bottom: 5px;
+}
+
+.skill-result-item {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 6px 8px;
+    margin: 2px 0;
+    font-size: 0.85em;
+    border-radius: 4px;
+}
+
+.skill-result-item.proficient {
+    background: rgba(212, 175, 55, 0.15);
+    border-radius: 4px;
+    padding: 6px 8px;
+    margin: 2px 0;
+}
+
+.skill-result-item.proficient .skill-name {
+    color: #d4af37;
+    font-weight: 600;
+}
+
+.skill-result-item .skill-name {
+    color: #ffffff;
+    font-weight: 500;
+}
+
+.skill-result-item .skill-result {
+    color: #d4af37;
+    font-weight: 700;
+    font-size: 1em;
+    min-width: 30px;
+    text-align: right;
+}
+
+.skill-result-item .skill-result.critical-success {
+    color: #4ade80;
+    text-shadow: 0 0 5px rgba(74, 222, 128, 0.5);
+}
+
+.skill-result-item .skill-result.critical-failure {
+    color: #f87171;
+    text-shadow: 0 0 5px rgba(248, 113, 113, 0.5);
+}
+
+/* Responsive Design for Skill Results */
+@media (max-width: 768px) {
+    .skill-results-grid {
+        grid-template-columns: repeat(2, 1fr);
+        gap: 10px;
+        max-width: 100%;
+    }
+    
+    .skill-group-result {
+        padding: 10px;
+    }
+    
+    .skill-result-item {
+        font-size: 0.8em;
+        padding: 4px 6px;
+    }
+    
+    .skill-result-item.proficient {
+        padding: 4px 6px;
+    }
+}
+
+@media (max-width: 480px) {
+    .skill-results-grid {
+        grid-template-columns: 1fr;
+        gap: 8px;
+    }
+}
+
 /* Dice Rolling Styles */
 .dice-section {
     background: rgba(0, 0, 0, 0.3);

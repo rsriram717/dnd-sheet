@@ -15,6 +15,7 @@ class CharacterSheet {
         this.initializeEventListeners();
         this.initializeJournal();
         this.initializeDiceRoller();
+        this.initializeSkillResults();
         this.initializeNavigation();
         this.loadLastCharacter();
         this.loadLastScreen();
@@ -47,7 +48,13 @@ class CharacterSheet {
         document.getElementById('export-character-btn').addEventListener('click', () => this.exportCharacter());
         
         // Import file input
-        document.getElementById('import-file').addEventListener('change', (e) => this.handleFileImport(e));
+        const importFileInput = document.getElementById('import-file');
+        if (importFileInput) {
+            importFileInput.addEventListener('change', (e) => this.handleFileImport(e));
+            console.log('Import file input found and event listener attached');
+        } else {
+            console.error('Import file input not found!');
+        }
 
         document.getElementById('save-info-btn').addEventListener('click', () => this.showSaveInfoModal());
 
@@ -1269,8 +1276,14 @@ class CharacterSheet {
 
     // Handle file import
     handleFileImport(e) {
+        console.log('File import triggered');
         const file = e.target.files[0];
-        if (!file) return;
+        if (!file) {
+            console.log('No file selected');
+            return;
+        }
+        
+        console.log('File selected:', file.name, file.type);
         
         if (!file.name.endsWith('.json')) {
             alert('Please select a valid JSON file.');
@@ -1280,17 +1293,30 @@ class CharacterSheet {
         const reader = new FileReader();
         reader.onload = (event) => {
             try {
+                console.log('File content loaded, parsing JSON...');
                 const characterData = JSON.parse(event.target.result);
+                console.log('Character data parsed:', characterData);
+                
                 const characterName = characterData.name || `character_${Date.now()}`;
                 
                 this.currentCharacter = characterName;
                 this.loadCharacterData(characterData);
                 this.saveCharacter();
                 alert(`Character "${characterName}" imported successfully!`);
+                
+                // Close any open modals
+                document.getElementById('character-modal').style.display = 'none';
             } catch (error) {
-                alert('Failed to import character. Invalid JSON file.');
+                console.error('JSON parsing error:', error);
+                alert('Failed to import character. Invalid JSON file. Error: ' + error.message);
             }
         };
+        
+        reader.onerror = (error) => {
+            console.error('File reading error:', error);
+            alert('Failed to read the file.');
+        };
+        
         reader.readAsText(file);
         
         // Reset file input
@@ -1569,6 +1595,178 @@ class CharacterSheet {
         const savedScreen = localStorage.getItem('currentScreen');
         if (savedScreen && savedScreen !== 'character') {
             this.switchScreen(savedScreen);
+        }
+    }
+
+    // Initialize skill results system
+    initializeSkillResults() {
+        this.skillToAbility = {
+            'athletics': 'strength',
+            'acrobatics': 'dexterity',
+            'sleight-of-hand': 'dexterity',
+            'stealth': 'dexterity',
+            'arcana': 'intelligence',
+            'history': 'intelligence',
+            'investigation': 'intelligence',
+            'nature': 'intelligence',
+            'religion': 'intelligence',
+            'animal-handling': 'wisdom',
+            'insight': 'wisdom',
+            'medicine': 'wisdom',
+            'perception': 'wisdom',
+            'survival': 'wisdom',
+            'deception': 'charisma',
+            'intimidation': 'charisma',
+            'performance': 'charisma',
+            'persuasion': 'charisma'
+        };
+    }
+
+    // Show skill results for a d20 roll
+    showSkillResults(d20Roll) {
+        console.log('showSkillResults called with d20Roll:', d20Roll);
+        const skillResultsDisplay = document.getElementById('skill-results-display');
+        if (!skillResultsDisplay) {
+            console.log('skill-results-display element not found');
+            return;
+        }
+
+        // Show the results panel
+        skillResultsDisplay.style.display = 'block';
+        console.log('Skill results panel shown');
+
+        // Calculate results for each skill
+        console.log('Available skills:', Object.keys(this.skillToAbility));
+        Object.keys(this.skillToAbility).forEach(skill => {
+            this.calculateAndDisplaySkillResult(skill, d20Roll);
+        });
+
+        // Also calculate constitution save
+        this.calculateAndDisplaySkillResult('constitution-save', d20Roll, 'constitution');
+    }
+
+    // Calculate and display individual skill result
+    calculateAndDisplaySkillResult(skill, d20Roll, overrideAbility = null) {
+        const resultElement = document.getElementById(`${skill}-result`);
+        if (!resultElement) {
+            console.log(`Result element not found for skill: ${skill}`);
+            return;
+        }
+        
+        console.log(`Found result element for ${skill}:`, resultElement);
+
+        let abilityKey = overrideAbility || this.skillToAbility[skill];
+        let abilityScore = 10;
+        let isProficient = false;
+        let proficiencyBonus = 2;
+
+        console.log(`Calculating for skill: ${skill}, ability: ${abilityKey}, d20: ${d20Roll}`);
+
+        // Use character data if available
+        if (this.currentCharacter) {
+            console.log('Using character data:', this.currentCharacter);
+            console.log('Character type:', typeof this.currentCharacter);
+            
+            // Check if currentCharacter is the data object or we need to load from storage
+            let characterData = this.currentCharacter;
+            if (typeof this.currentCharacter === 'string') {
+                // If it's a string, load from localStorage
+                const savedCharacters = JSON.parse(localStorage.getItem('dnd-characters') || '{}');
+                characterData = savedCharacters[this.currentCharacter];
+                console.log('Loaded character from storage:', characterData);
+            }
+            
+            if (!characterData) {
+                console.log('No character data found, using defaults');
+                characterData = {};
+            }
+            
+            const abilities = characterData.abilities || {};
+            const skills = characterData.skills || {};
+            const level = characterData.level || 1;
+            
+            abilityScore = abilities[abilityKey] || 10;
+            isProficient = skills[skill] || false;
+            proficiencyBonus = Math.ceil(level / 4) + 1;
+            
+            console.log(`Ability score: ${abilityScore}, Proficient: ${isProficient}, Prof bonus: ${proficiencyBonus}`);
+        } else {
+            console.log('No character data available, using defaults');
+        }
+
+        const abilityModifier = Math.floor((abilityScore - 10) / 2);
+        const totalModifier = abilityModifier + (isProficient ? proficiencyBonus : 0);
+        const totalResult = d20Roll + totalModifier;
+
+        console.log(`Final calculation: ${d20Roll} + ${totalModifier} = ${totalResult}`);
+
+        // Display the result
+        console.log(`Setting result element text to: ${totalResult}`);
+        resultElement.textContent = totalResult;
+        console.log(`Result element after setting:`, resultElement.textContent);
+        
+        // Add critical styling
+        resultElement.className = 'skill-result';
+        if (d20Roll === 20) {
+            resultElement.classList.add('critical-success');
+        } else if (d20Roll === 1) {
+            resultElement.classList.add('critical-failure');
+        }
+    }
+
+    // Override the existing rollDice method to show skill results for d20 rolls
+    rollDice(event) {
+        const button = event.currentTarget;
+        const sides = parseInt(button.dataset.sides);
+        const quantity = parseInt(document.getElementById('dice-quantity').value) || 1;
+        const modifier = parseInt(document.getElementById('dice-modifier').value) || 0;
+        
+        // Add rolling animation
+        button.classList.add('rolling');
+        setTimeout(() => button.classList.remove('rolling'), 600);
+        
+        let rolls = [];
+        let total = 0;
+        
+        if (sides === 20 && this.advantageMode !== 'normal') {
+            // Handle advantage/disadvantage for d20
+            const roll1 = Math.floor(Math.random() * 20) + 1;
+            const roll2 = Math.floor(Math.random() * 20) + 1;
+            
+            if (this.advantageMode === 'advantage') {
+                rolls = [Math.max(roll1, roll2)];
+                total = rolls[0] + modifier;
+            } else {
+                rolls = [Math.min(roll1, roll2)];
+                total = rolls[0] + modifier;
+            }
+            
+            this.displayRollResult(button, rolls[0], `${this.advantageMode} (${roll1}, ${roll2})`);
+        } else {
+            // Normal rolling
+            for (let i = 0; i < quantity; i++) {
+                const roll = Math.floor(Math.random() * sides) + 1;
+                rolls.push(roll);
+                total += roll;
+            }
+            total += modifier;
+            
+            this.displayRollResult(button, rolls.length === 1 ? rolls[0] : total);
+        }
+        
+        // Add to history
+        const rollExpression = quantity > 1 ? `${quantity}d${sides}` : `d${sides}`;
+        const modifierText = modifier !== 0 ? (modifier > 0 ? `+${modifier}` : `${modifier}`) : '';
+        const advantageText = sides === 20 && this.advantageMode !== 'normal' ? ` (${this.advantageMode})` : '';
+        
+        this.addToRollHistory(`${rollExpression}${modifierText}${advantageText}`, total, rolls);
+        
+        // Update main result display
+        this.updateMainResult(total, rolls, modifier, sides === 20);
+        
+        // Show skill results for d20 rolls (single die only)
+        if (sides === 20 && quantity === 1) {
+            this.showSkillResults(rolls[0]);
         }
     }
 }
